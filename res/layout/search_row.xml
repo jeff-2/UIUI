@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:descendantFocusability="blocksDescendants" >
+
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1.0">
+	    <TextView
+	        android:id="@+id/searchRestaurantName"
+	        style="@android:style/TextAppearance.Medium"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_centerVertical="true"
+	        android:paddingRight="10dp"
+	        android:gravity="left"/>
+	
+	    <TextView
+	        android:id="@+id/searchRestaurantAddress"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_centerVertical="true"
+	        android:paddingRight="10dp"
+	        android:layout_toRightOf="@+id/searchRestaurantName"
+	        android:gravity="left" />
+	</RelativeLayout>
+
+    <ImageButton
+        android:id="@+id/searchButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/ic_dialog_map_description"
+        android:src="@android:drawable/ic_dialog_map" />
+
+</LinearLayout>
