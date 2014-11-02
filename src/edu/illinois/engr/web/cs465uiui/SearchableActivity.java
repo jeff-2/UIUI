@@ -1,9 +1,6 @@
 package edu.illinois.engr.web.cs465uiui;
 
-import java.io.BufferedInputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -158,21 +155,18 @@ public class SearchableActivity extends ListActivity {
 			
 			List<SearchItem> queryResults = new ArrayList<SearchItem>();
 
+			URL url;
 			try {
-				URL url = new URL("http://cs465uiui.web.engr.illinois.edu/search.php");
-				try {
-					HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-					try {
-						InputStream inputStream = new BufferedInputStream(urlConnection.getInputStream());
-						queryResults = JsonUtils.parseJSONResponse(inputStream);
-					} finally {
-						urlConnection.disconnect();
+				url = new URL("http://cs465uiui.web.engr.illinois.edu/search.php");
+				NetworkRequest<SearchItem> request = new NetworkRequest<SearchItem>(url);
+				queryResults = request.sendAndReceive(new JsonParser<SearchItem>() {
+					@Override
+					public List<SearchItem> parse(InputStream in) {
+						return JsonUtils.parseJSONResponse(in);
 					}
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				}
-			} catch (MalformedURLException e1) {
-				e1.printStackTrace();
+				});
+			} catch (MalformedURLException e) {
+				e.printStackTrace();
 			}
 			
 			Log.d("ServerQueryTask", "Elapsed time:" + (System.currentTimeMillis() - time));
