@@ -16,8 +16,8 @@ import android.os.AsyncTask;
 import com.google.android.gms.maps.model.LatLng;
 
 /**
- * Class that calls the Google Maps API online to receive JSON of the query.
- * Used to get the Longitude and Latitude of a given address
+ * Class used to call the Google Maps API online asynchronously to receive 
+ * JSON of the query. Used to get the Longitude and Latitude of a given address.
  */
 public class GeoCoordinates extends AsyncTask<String, Void, LatLng> {
 	@Override
@@ -47,6 +47,19 @@ public class GeoCoordinates extends AsyncTask<String, Void, LatLng> {
 			e.printStackTrace();
 		} 
         return new LatLng(latitude, longitude);
+	}
+	
+	/**
+	 * Gets a LatLng from the Google Maps API from the address
+	 * @param address String representing the address of the restaurant
+	 * @return LatLng created from the address
+	 */
+	public static LatLng getCoordinates(String address) {
+    	try {
+			return new GeoCoordinates().execute(address).get();
+		} catch (Exception e) {
+			return null;
+		}
 	}
 
 }

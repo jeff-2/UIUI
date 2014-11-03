@@ -3,6 +3,7 @@ package edu.illinois.engr.web.cs465uiui;
 import java.util.List;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,7 +15,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 
+
 public class SearchListArrayAdapter extends ArrayAdapter<SearchItem> {
+	private Context context;
 	
 	static class ViewHolder {
 		public TextView name;
@@ -24,6 +27,7 @@ public class SearchListArrayAdapter extends ArrayAdapter<SearchItem> {
 
 	public SearchListArrayAdapter(Context context, List<SearchItem> items) {
 		super(context, R.layout.search_row, items);
+		this.context = context;
 	}
 	
 	public boolean isEnabled(int position) {
@@ -31,7 +35,7 @@ public class SearchListArrayAdapter extends ArrayAdapter<SearchItem> {
 	}
 	
 	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
+	public View getView(final int position, View convertView, ViewGroup parent) {
 		
 		View rowView = convertView;
 		ViewHolder viewHolder;
@@ -57,7 +61,15 @@ public class SearchListArrayAdapter extends ArrayAdapter<SearchItem> {
 			@Override
 			public void onClick(View v) {
 				// TODO: redirect to map (need api call?)
+				startSearchMapActivity();
 				Log.d("SearchListArrayAdapter", "image button clicked. should redirect to map");
+			}
+
+			private void startSearchMapActivity() {
+				Intent intent = new Intent(context, SearchMapActivity.class);
+				intent.putExtra("restaurantName", getItem(position).getRestaurantName());
+				intent.putExtra("restaurantAddress", getItem(position).getRestaurantAddress());
+		    	context.startActivity(intent);
 			}
         });
         
@@ -69,5 +81,6 @@ public class SearchListArrayAdapter extends ArrayAdapter<SearchItem> {
 
         return rowView;
 	}
+
 
 }

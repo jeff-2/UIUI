@@ -11,6 +11,9 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+/**
+ * Activity to display screen to compare restaurants on a map
+ */
 public class ComparisonMapActivity extends MainActivity {
 	private GoogleMap map; 
 	 
@@ -23,7 +26,7 @@ public class ComparisonMapActivity extends MainActivity {
 
 		// TODO: Get address, time, day, radius, and tags from query screen to filter results
 		String address = "Green & Wright Champaign";
-		LatLng mapCenter = getCoordinates(address);
+		LatLng mapCenter = GeoCoordinates.getCoordinates(address);
 		
 		List<RestaurantMapItem> restaurants = getRestaurants();
 		for(RestaurantMapItem restaurant : restaurants) {
@@ -38,14 +41,6 @@ public class ComparisonMapActivity extends MainActivity {
 	    
 	    map.moveCamera(CameraUpdateFactory.newLatLngZoom(mapCenter, 15));
 	    map.setMyLocationEnabled(true);
-	}
-	
-	private LatLng getCoordinates(String address) {
-    	try {
-			return new GeoCoordinates().execute(address).get();
-		} catch (Exception e) {
-			return null;
-		}
 	}
 	
 	/**
