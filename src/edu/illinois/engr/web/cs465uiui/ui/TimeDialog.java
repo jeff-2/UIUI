@@ -160,7 +160,6 @@ public class TimeDialog extends DialogFragment
 		{
 			hasSelectedActual = true;
 			refresh();
-			Log.d("----", "date changed");
 		}
 		
 		/*called for the "now button"*/
