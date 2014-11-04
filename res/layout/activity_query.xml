@@ -11,6 +11,7 @@
         <TextView
         	android:layout_width="wrap_content"
         	android:layout_height="wrap_content"
+        	android:layout_gravity="center_vertical"
         	android:paddingRight="@dimen/label_hsep"
         	android:textAppearance="?android:attr/textAppearanceMedium"
         	android:text="Time:" />
@@ -21,6 +22,12 @@
         	android:layout_gravity="center_vertical"
         	android:textAppearance="?android:attr/textAppearanceMedium"
         	android:text="--time--" />
+        
+        <ImageButton
+        	android:layout_width="wrap_content"
+        	android:layout_height="wrap_content"
+        	android:src="@drawable/ic_action_edit"
+        	android:onClick="handleEditTime" />
         
     </LinearLayout>
 	

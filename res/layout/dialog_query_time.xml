@@ -1,0 +1,44 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:orientation="vertical" >
+	
+	<LinearLayout
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal"
+    	android:layout_gravity="center_horizontal" >
+	
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:paddingRight="@dimen/label_hsep"
+			android:text="Current Selection:" />
+	
+		<TextView android:id="@+id/diag_qtime_current"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="--time--" />
+	
+	</LinearLayout>
+
+    <Button
+    	android:id="@+id/diag_qtime_now"
+    	android:layout_width="wrap_content"
+    	android:layout_height="wrap_content"
+    	android:layout_gravity="center_horizontal"
+    	android:text="(now)" />
+
+    <TimePicker
+    	android:id="@+id/diag_qtime_time"
+    	android:layout_width="wrap_content"
+    	android:layout_height="wrap_content"
+    	android:layout_gravity="center_horizontal" />
+
+    <DatePicker
+    	android:id="@+id/diag_qtime_date"
+    	android:layout_width="match_parent"
+    	android:layout_height="0dp"
+    	android:layout_weight="1" />
+
+</LinearLayout>
