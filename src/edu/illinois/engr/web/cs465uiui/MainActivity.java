@@ -28,6 +28,13 @@ public class MainActivity extends Activity {
             	goToComparisonActivity();
             }
         });
+        
+        final Button mapButton = (Button) findViewById(R.id.mapButton);
+        mapButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+            	goToComparisonMapActivity();
+            }
+        });
 	}
 	
 	public void goToComparisonActivity() {
@@ -37,6 +44,11 @@ public class MainActivity extends Activity {
 	
 	public void goToSearchActivity() {
     	Intent intent = new Intent(this, SearchableActivity.class);
+    	startActivity(intent);
+	}
+	
+	public void goToComparisonMapActivity() {
+    	Intent intent = new Intent(this, ComparisonMapActivity.class);
     	startActivity(intent);
 	}
 

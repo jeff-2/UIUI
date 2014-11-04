@@ -84,7 +84,6 @@ public class SearchableActivity extends ListActivity {
 				return true;
 			}
 		});
-
 		getRestaurants();
 	}
 
