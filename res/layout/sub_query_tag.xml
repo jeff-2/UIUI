@@ -1,0 +1,18 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:orientation="horizontal" >
+
+    <CheckBox
+    	android:id="@+id/sub_qtag_check"
+    	android:layout_width="wrap_content"
+    	android:layout_height="wrap_content" />
+
+    <TextView
+    	android:id="@+id/sub_qtag_name"
+    	android:layout_width="wrap_content"
+    	android:layout_height="wrap_content"
+    	android:text="--tag name--"
+    	android:textAppearance="?android:attr/textAppearanceMedium" />
+
+</LinearLayout>

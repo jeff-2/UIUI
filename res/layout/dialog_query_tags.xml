@@ -1,0 +1,48 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:orientation="vertical" >
+
+	<RadioGroup
+		android:id="@+id/diag_qtags_group"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal"
+		android:layout_gravity="center_horizontal" >
+
+		<RadioButton
+			android:id="@+id/diag_qtags_all"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="All of" />
+
+		<RadioButton
+			android:id="@+id/diag_qtags_any"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="Any of" />
+		
+	</RadioGroup>
+	
+	<!-- Loading icon, then list once it's loaded -->
+	
+	<FrameLayout 
+		android:layout_width="match_parent"
+		android:layout_height="0dp"
+		android:layout_weight="1" >
+
+		<ProgressBar
+			android:id="@+id/diag_qtags_loading"
+			style="?android:attr/progressBarStyleLarge"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center" />
+		
+		<ListView
+			android:id="@+id/diag_qtags_list"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent" />
+	</FrameLayout>
+
+	
+</LinearLayout>
