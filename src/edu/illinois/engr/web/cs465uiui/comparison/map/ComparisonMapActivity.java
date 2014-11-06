@@ -15,8 +15,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import edu.illinois.engr.web.cs465uiui.MainActivity;
 import edu.illinois.engr.web.cs465uiui.R;
-import edu.illinois.engr.web.cs465uiui.main.MainActivity;
 
 /**
  * Activity to display screen to compare restaurants on a map

@@ -1,4 +1,4 @@
-package edu.illinois.engr.web.cs465uiui.main;
+package edu.illinois.engr.web.cs465uiui;
 
 import edu.illinois.engr.web.cs465uiui.R;
 import edu.illinois.engr.web.cs465uiui.comparison.list.ComparisonListActivity;

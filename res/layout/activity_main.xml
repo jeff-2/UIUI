@@ -6,7 +6,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="edu.illinois.engr.web.cs465uiui.main.MainActivity" >
+    tools:context="edu.illinois.engr.web.cs465uiui.MainActivity" >
 
     <Button
         android:id="@+id/searchButton"
