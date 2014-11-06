@@ -3,6 +3,7 @@ package edu.illinois.engr.web.cs465uiui;
 import java.util.Calendar;
 
 import edu.illinois.engr.web.cs465uiui.store.QueryData;
+import edu.illinois.engr.web.cs465uiui.ui.TagsDialog;
 import edu.illinois.engr.web.cs465uiui.ui.TimeDialog;
 
 import android.app.Activity;
@@ -52,6 +53,11 @@ public class QueryActivity extends Activity
 		TimeDialog dialog = new TimeDialog();
 		dialog.setArguments(args);
 		dialog.show(getFragmentManager(), null);
+	}
+	
+	public void handleEditTags(View v)
+	{
+		new TagsDialog().show(getFragmentManager(), "");
 	}
 	
 	
