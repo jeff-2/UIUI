@@ -1,13 +1,17 @@
-package edu.illinois.engr.web.cs465uiui;
+package edu.illinois.engr.web.cs465uiui.utils;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 
+
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.TypeFactory;
+
+import edu.illinois.engr.web.cs465uiui.search.SearchItem;
+
 
 public class JsonUtils {
 	

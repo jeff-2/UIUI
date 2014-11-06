@@ -1,4 +1,9 @@
-package edu.illinois.engr.web.cs465uiui;
+package edu.illinois.engr.web.cs465uiui.main;
+
+import edu.illinois.engr.web.cs465uiui.R;
+import edu.illinois.engr.web.cs465uiui.comparison.list.ComparisonListActivity;
+import edu.illinois.engr.web.cs465uiui.comparison.map.ComparisonMapActivity;
+import edu.illinois.engr.web.cs465uiui.search.SearchableActivity;
 
 import android.app.Activity;
 import android.content.Intent;

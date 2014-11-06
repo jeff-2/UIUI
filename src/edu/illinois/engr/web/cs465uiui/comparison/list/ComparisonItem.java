@@ -1,4 +1,4 @@
-package edu.illinois.engr.web.cs465uiui;
+package edu.illinois.engr.web.cs465uiui.comparison.list;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -1,4 +1,4 @@
-package edu.illinois.engr.web.cs465uiui;
+package edu.illinois.engr.web.cs465uiui.comparison.map;
 
 /**
  * Class used to represent a restaurant for the ComparisonMapActivity

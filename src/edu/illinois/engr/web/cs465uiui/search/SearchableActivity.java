@@ -1,10 +1,19 @@
-package edu.illinois.engr.web.cs465uiui;
+package edu.illinois.engr.web.cs465uiui.search;
 
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+
+import edu.illinois.engr.web.cs465uiui.R;
+import edu.illinois.engr.web.cs465uiui.R.id;
+import edu.illinois.engr.web.cs465uiui.R.layout;
+import edu.illinois.engr.web.cs465uiui.R.menu;
+import edu.illinois.engr.web.cs465uiui.utils.JsonParser;
+import edu.illinois.engr.web.cs465uiui.utils.JsonUtils;
+import edu.illinois.engr.web.cs465uiui.utils.NetworkRequest;
+
 
 import android.app.AlertDialog;
 import android.app.ListActivity;

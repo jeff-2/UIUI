@@ -1,4 +1,4 @@
-package edu.illinois.engr.web.cs465uiui;
+package edu.illinois.engr.web.cs465uiui.search;
 
 import android.os.Bundle;
 
@@ -9,6 +9,11 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import edu.illinois.engr.web.cs465uiui.R;
+import edu.illinois.engr.web.cs465uiui.R.id;
+import edu.illinois.engr.web.cs465uiui.R.layout;
+import edu.illinois.engr.web.cs465uiui.comparison.map.GeoCoordinates;
+import edu.illinois.engr.web.cs465uiui.main.MainActivity;
 
 /**
  * Activity to display screen when user click on the map button in

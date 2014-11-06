@@ -1,6 +1,11 @@
-package edu.illinois.engr.web.cs465uiui;
+package edu.illinois.engr.web.cs465uiui.search;
 
 import java.util.List;
+
+import edu.illinois.engr.web.cs465uiui.R;
+import edu.illinois.engr.web.cs465uiui.R.id;
+import edu.illinois.engr.web.cs465uiui.R.layout;
+
 
 import android.content.Context;
 import android.content.Intent;

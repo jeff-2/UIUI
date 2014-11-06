@@ -1,4 +1,4 @@
-package edu.illinois.engr.web.cs465uiui;
+package edu.illinois.engr.web.cs465uiui.comparison.map;
   
 
 import java.net.URLEncoder;

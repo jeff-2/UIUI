@@ -1,8 +1,14 @@
-package edu.illinois.engr.web.cs465uiui;
+package edu.illinois.engr.web.cs465uiui.comparison.list;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+
+
+import edu.illinois.engr.web.cs465uiui.R;
+import edu.illinois.engr.web.cs465uiui.R.id;
+import edu.illinois.engr.web.cs465uiui.R.layout;
+import edu.illinois.engr.web.cs465uiui.R.menu;
 
 import android.app.ListActivity;
 import android.os.Bundle;

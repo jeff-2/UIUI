@@ -1,6 +1,11 @@
-package edu.illinois.engr.web.cs465uiui;
+package edu.illinois.engr.web.cs465uiui.comparison.list;
 
 import java.util.List;
+
+
+import edu.illinois.engr.web.cs465uiui.R;
+import edu.illinois.engr.web.cs465uiui.R.id;
+import edu.illinois.engr.web.cs465uiui.R.layout;
 
 import android.content.Context;
 import android.view.LayoutInflater;
