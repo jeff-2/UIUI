@@ -15,10 +15,12 @@ import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -42,22 +44,30 @@ public class SearchableActivity extends ListActivity {
 			task = new SearchQueryTask(this);
 			task.execute();
 		} else {
-			// TODO: more user friendly handling of no network connectivity. maybe check before going to search activity?
-			Log.d("SearchableActivity", "Error:no network connectivity");
-			AlertDialog.Builder builder = new AlertDialog.Builder(this)
-			.setMessage("You are not currently connected to a network. Enable access to be able to search.")
-			.setTitle("Info")
-			.setCancelable(false)
-			.setIcon(android.R.drawable.ic_dialog_alert)
-			.setPositiveButton("OK", 
-						new DialogInterface.OnClickListener() {
-							public void onClick(DialogInterface dialog,	int id) {
-								dialog.dismiss();
-								finish();
-							}
-						});
-			builder.create().show();
+			showNetworkConnectivityDialog();
 		}
+	}
+	
+	private void showNetworkConnectivityDialog() {
+		Log.d("SearchableActivity", "Error:no network connectivity");
+		AlertDialog.Builder builder = new AlertDialog.Builder(this)
+		.setMessage("You are not currently connected to a network. No search results will be available until internet access is available.")
+		.setTitle("No Network Access")
+		.setCancelable(false)
+		.setIcon(android.R.drawable.ic_dialog_alert)
+		.setNegativeButton("Close", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.dismiss();
+			}
+		})
+		.setPositiveButton("Settings", 
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog,	int id) {
+							startActivity(new Intent(Settings.ACTION_WIRELESS_SETTINGS));
+						}
+					});
+		builder.create().show();
 	}
 
 	@Override
@@ -70,6 +80,9 @@ public class SearchableActivity extends ListActivity {
 		searchView.setOnQueryTextListener(new OnQueryTextListener() {
 			@Override
 			public boolean onQueryTextSubmit(String query) {
+				if (restaurants == null || restaurants.isEmpty()) {
+					getRestaurants();
+				}
 				filterRestaurants(query);
 
 				// TODO: onQueryTextSubmit is called twice
@@ -78,6 +91,7 @@ public class SearchableActivity extends ListActivity {
 
 			@Override
 			public boolean onQueryTextChange(String newText) {
+				
 				if (newText.length() == 0) {
 					Log.d("SearchableActivity", "Query Text Cleared");
 					// clear results
@@ -92,7 +106,7 @@ public class SearchableActivity extends ListActivity {
 	}
 
 	private void filterRestaurants(String query) {
-		if (restaurants == null)
+		if (restaurants == null || restaurants.isEmpty())
 			return;
 
 		Log.d("SearchableActivity", "Filtering Restaurants with query:" + query);
