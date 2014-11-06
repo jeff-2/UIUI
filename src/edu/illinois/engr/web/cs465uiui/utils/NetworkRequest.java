@@ -12,13 +12,15 @@ import java.util.List;
 public class NetworkRequest<T> {
 	
 	private URL url;
+	private JsonParser<T> parser;
 	
-	public NetworkRequest(URL url) {
+	public NetworkRequest(URL url, JsonParser<T> parser) {
 		this.url = url;
+		this.parser = parser;
 	}
 	
-	public List<T> sendAndReceive(JsonParser<T> parser) {
-		List<T> results = new ArrayList<T>();
+	public List<T> sendAndReceive() {
+		List<T> results = new ArrayList<>();
 		try {
 			HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
 			urlConnection.setRequestMethod("GET");

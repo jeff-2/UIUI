@@ -3,6 +3,7 @@ package edu.illinois.engr.web.cs465uiui.utils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.List;
 
 
 import com.fasterxml.jackson.core.JsonParseException;
@@ -10,19 +11,24 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 
-import edu.illinois.engr.web.cs465uiui.search.SearchItem;
 
-
-public class JsonUtils {
+public class JsonParserImpl<T> implements JsonParser<T> {
 	
-	public static ArrayList<SearchItem> parseJSONResponse(InputStream in) {
+	private Class<T> elementClass;
+	
+	public JsonParserImpl(Class<T> elementClass) {
+		this.elementClass = elementClass;
+	}
+	
+	@Override
+	public List<T> parse(InputStream in) {
 		
 		ObjectMapper objectMapper = new ObjectMapper(); 
 		TypeFactory typeFactory = objectMapper.getTypeFactory();
 		
-		ArrayList<SearchItem> queryResults = new ArrayList<SearchItem>();
+		List<T> queryResults = new ArrayList<>();
 		try {
-			queryResults = objectMapper.readValue(in, typeFactory.constructCollectionType(ArrayList.class, SearchItem.class));
+			queryResults = objectMapper.readValue(in, typeFactory.constructCollectionType(ArrayList.class, elementClass));
 		} catch (JsonParseException e) {
 			e.printStackTrace();
 		} catch (JsonMappingException e) {
