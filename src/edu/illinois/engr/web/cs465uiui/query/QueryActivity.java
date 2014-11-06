@@ -1,7 +1,6 @@
 package edu.illinois.engr.web.cs465uiui.query;
 
 import edu.illinois.engr.web.cs465uiui.R;
-import edu.illinois.engr.web.cs465uiui.R.layout;
 import android.app.Activity;
 import android.os.Bundle;
 

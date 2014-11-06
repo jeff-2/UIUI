@@ -8,25 +8,18 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="edu.illinois.engr.web.cs465uiui.main.MainActivity" >
 
-    <TextView
-        android:id="@+id/mainText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/hello_world" />
-
     <Button
-        android:id="@+id/mainButton"
+        android:id="@+id/searchButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/mainText"
         android:layout_centerHorizontal="true"
         android:text="Search" />
 
     <Button
-        android:id="@+id/mainButton2"
+        android:id="@+id/comparisonListButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/mainButton"
+        android:layout_below="@+id/searchButton"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="23dp"
         android:text="Result Comparison List" />
@@ -35,7 +28,7 @@
         android:id="@+id/mapButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/mainButton2"
+        android:layout_below="@+id/comparisonListButton"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="23dp"
         android:text="Comparison Map"/>

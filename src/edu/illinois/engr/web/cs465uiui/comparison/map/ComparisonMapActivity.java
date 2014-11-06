@@ -16,9 +16,6 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import edu.illinois.engr.web.cs465uiui.R;
-import edu.illinois.engr.web.cs465uiui.R.drawable;
-import edu.illinois.engr.web.cs465uiui.R.id;
-import edu.illinois.engr.web.cs465uiui.R.layout;
 import edu.illinois.engr.web.cs465uiui.main.MainActivity;
 
 /**
