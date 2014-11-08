@@ -1,16 +1,14 @@
 package edu.illinois.engr.web.cs465uiui.search;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
 import edu.illinois.engr.web.cs465uiui.R;
-import edu.illinois.engr.web.cs465uiui.utils.JsonParserImpl;
-import edu.illinois.engr.web.cs465uiui.utils.NetworkRequest;
-
 
 import android.app.AlertDialog;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
+import android.app.FragmentManager;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -18,7 +16,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
@@ -35,25 +32,30 @@ import android.widget.SearchView.OnQueryTextListener;
  * corresponding addresses that match the specified search. Allows the user to verify the location of the restaurant on the map
  * and select a search result for a more informative view.
  */
-public class SearchActivity extends ListActivity {
+public class SearchActivity extends ListActivity implements AsyncListener<List<SearchItem>> {
 	
-	private static final String requestURL = "http://cs465uiui.web.engr.illinois.edu/search.php";
-
-	/** The restaurants in the database. */
-	private List<SearchItem> restaurants;
-
+	/** The dialog used to display progress of the SearchTask which gathers restaurant information from a server. */
+	private ProgressDialog dialog;
+	
 	/**
-	 * Executes an asynchronous task to request the restaurants from the server. Sets the list of restaurants to the result
-	 * if successful. If no network connection is provided, displays a helpful dialog to the user.
+	 * Executes an asynchronous task to request the restaurants from the server. Stores the list of restaurants in a fragment
+	 * that is retained if successful. If no network connection is provided, displays a helpful dialog to the user.
+	 *
+	 * @return the restaurants
 	 */
-	public void getRestaurants() {
+	public void loadRestaurants() {
 
 		ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 		NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
 		if (networkInfo != null && networkInfo.isConnected()) {
 			// fetch data
-			SearchQueryTask task = new SearchQueryTask(this);
-			task.execute();
+			FragmentManager fm = getFragmentManager();
+			SearchFragment fragment = (SearchFragment)fm.findFragmentByTag("search");
+			if (fragment == null) {
+				fragment = new SearchFragment();
+				FragmentTransaction transaction = fm.beginTransaction();
+				transaction.add(fragment, "search").commit();
+			}
 		} else {
 			showNetworkConnectivityDialog();
 		}
@@ -93,15 +95,16 @@ public class SearchActivity extends ListActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_search);
 		Log.d("SearchActivity", "OnCreate");
-
+		
 		final SearchView searchView = (SearchView) findViewById(R.id.searchView);
 		searchView.setOnQueryTextListener(new OnQueryTextListener() {
 			@Override
 			public boolean onQueryTextSubmit(String query) {
 				// filters all restaurants down to restaurants that match the search text
-				if (restaurants == null || restaurants.isEmpty())
-					getRestaurants();
+				if (!restaurantsBeingLoaded())
+					loadRestaurants();
 				filterRestaurants(query);
+				searchView.clearFocus();
 
 				// TODO: onQueryTextSubmit is called twice
 				return true;
@@ -120,7 +123,8 @@ public class SearchActivity extends ListActivity {
 				return true;
 			}
 		});
-		getRestaurants();
+		if (!restaurantsBeingLoaded())
+			loadRestaurants();
 	}
 
 	/**
@@ -129,12 +133,13 @@ public class SearchActivity extends ListActivity {
 	 * @param query the search text to filter by
 	 */
 	private void filterRestaurants(String query) {
-		if (restaurants == null || restaurants.isEmpty())
+		// if restaurants not yet loaded, can't filter
+		if (getFragmentManager().findFragmentByTag("searchData") == null)
 			return;
 
 		Log.d("SearchActivity", "Filtering Restaurants with query:" + query);
 		ArrayList<SearchItem> filteredRestaurants = new ArrayList<SearchItem>();
-		for (SearchItem restaurant : restaurants) {
+		for (SearchItem restaurant : ((SearchDataFragment)getFragmentManager().findFragmentByTag("searchData")).getRestaurants()) {
 			String restaurantName = restaurant.getRestaurantName();
 			if (query.length() <= restaurantName.length() && restaurantName.substring(0, query.length()).equalsIgnoreCase(query))
 				filteredRestaurants.add(restaurant);
@@ -180,70 +185,64 @@ public class SearchActivity extends ListActivity {
 	}
 
 	/**
-	 * SearchQueryTask provides an asynchronous task which queries the server for restaurants and parses the response,
-	 * putting the result into the restaurants list.
+	 * Prepares and displays progress dialog for gathering restaurant data from a server.
 	 */
-	private class SearchQueryTask extends AsyncTask<Void, Void, List<SearchItem>> {
-		
-		/** The dialog used for indicating the progress of this task. */
-		private ProgressDialog dialog;
-
-		/**
-		 * Instantiates a new search query task.
-		 *
-		 * @param context the context
-		 */
-		public SearchQueryTask(Context context) {
-			dialog = new ProgressDialog(context);
-			dialog.setMessage("Loading restaurant information. Please wait.");
-		}
-		
-		/* (non-Javadoc)
-		 * @see android.os.AsyncTask#onPreExecute()
-		 */
-		@Override
-		protected void onPreExecute() {
-			dialog.show();
-		}
-		
-		/* (non-Javadoc)
-		 * @see android.os.AsyncTask#doInBackground(Params[])
-		 */
-		@Override
-		protected List<SearchItem> doInBackground(Void... params) {
-
-			List<SearchItem> queryResults = new ArrayList<>();
-
-			URL url;
-			try {
-				url = new URL(requestURL);
-				NetworkRequest<SearchItem> request = new NetworkRequest<SearchItem>(url, new JsonParserImpl<SearchItem>(SearchItem.class));
-				queryResults = request.sendAndReceive();
-			} catch (MalformedURLException e) {
-				e.printStackTrace();
-			}
-
-			return queryResults;
-		}
-
-		/* (non-Javadoc)
-		 * @see android.os.AsyncTask#onPostExecute(java.lang.Object)
-		 */
-		@Override
-		protected void onPostExecute(List<SearchItem> results) {
-			
-			if (dialog.isShowing()) {
-				dialog.dismiss();
-			}
-			
-			Log.d("ServerQueryTask", "onPostExecute");
-			for (SearchItem result : results) {
-				Log.d("ServerQueryTask", "name:" + result.getRestaurantName());
-				Log.d("ServerQueryTask", "address:" + result.getRestaurantAddress());
-			}
-
-			SearchActivity.this.restaurants = results;
-		}
+	private void prepareProgressDialog() {
+		dialog = new ProgressDialog(this);
+		dialog.setTitle("Getting restaurant information. Please wait...");
+		dialog.show();
+	}
+	
+	/* (non-Javadoc)
+	 * @see edu.illinois.engr.web.cs465uiui.search.AsyncListener#onPreExecute()
+	 */
+	@Override
+	public void onPreExecute() {
+		if (dialog == null)
+			prepareProgressDialog();
 	}
 
+	/* (non-Javadoc)
+	 * @see edu.illinois.engr.web.cs465uiui.search.AsyncListener#onPostExecute(java.lang.Object)
+	 */
+	@Override
+	public void onPostExecute(List<SearchItem> result) {
+		// save data in a fragment
+		FragmentManager fm = getFragmentManager();
+		SearchDataFragment dataFragment = new SearchDataFragment();
+		dataFragment.setRestaurants(result);
+		fm.beginTransaction().add(dataFragment, "searchData").commit();
+		cleanup();
+	}
+
+	/* (non-Javadoc)
+	 * @see edu.illinois.engr.web.cs465uiui.search.AsyncListener#onCancelled(java.lang.Object)
+	 */
+	@Override
+	public void onCancelled(List<SearchItem> result) {
+		cleanup();
+	}
+	
+	/**
+	 * Cleans up the data associated with the request for restaurant data from the server (SearchFragment and ProgressDialog). 
+	 */
+	private void cleanup() {
+		if (dialog != null) {
+			dialog.dismiss();
+			dialog = null;
+		}
+		FragmentManager fm = getFragmentManager();
+		Fragment fragment = fm.findFragmentByTag("search");
+		if (fragment != null)
+			fm.beginTransaction().remove(fragment).commit();
+	}
+
+	/**
+	 * Checks if restaurants are already loaded or being loaded from the network.
+	 * @return true if the restaurants are being loaded or have already been loaded, otherwise false
+	 */
+	private boolean restaurantsBeingLoaded() {
+		return getFragmentManager().findFragmentByTag("search") != null 
+				|| getFragmentManager().findFragmentByTag("searchData") != null;
+	}
 }
