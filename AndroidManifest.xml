@@ -33,6 +33,7 @@
 		</activity>
 		<activity
 			android:name="edu.illinois.engr.web.cs465uiui.search.SearchActivity"
+			android:configChanges="orientation|screenSize"
 			android:label="@string/app_name" >
 		</activity>
 		<activity
@@ -44,6 +45,7 @@
 			android:label="@string/app_name" />
 		<activity
 			android:name="edu.illinois.engr.web.cs465uiui.comparison.map.ComparisonMapActivity"
+			android:configChanges="orientation|screenSize"
 			android:label="@string/app_name" />
 		<activity
 			android:name="edu.illinois.engr.web.cs465uiui.search.SearchMapActivity"
