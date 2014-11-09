@@ -9,14 +9,19 @@ import edu.illinois.engr.web.cs465uiui.net.Fetch;
 import edu.illinois.engr.web.cs465uiui.store.QueryData;
 
 import android.app.DialogFragment;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 
-public class TagsDialog extends DialogFragment
+/**Lets the user select tags for the current query.
+ * Saves and loads queries from QueryData.
+ * XXX won't handle being destroyed and restarted well*/
+public class QueryTagsDialog extends DialogFragment
 {
 	/**Null when not loaded.*/
 	private Query query = null;
@@ -56,11 +61,17 @@ public class TagsDialog extends DialogFragment
 		new LoadTask().execute();
 	}
 	
-	@Override public void onStop()
+	@Override public void onDismiss(DialogInterface d)
 	{
 		query.allTags = all.isChecked();
 		QueryData.save(query, getActivity());
-		super.onStop();
+		
+		if(getActivity() instanceof Listener)
+			((Listener)getActivity()).onQueryTagsClosed();
+		else
+			Log.w("uiui.ui.QueryTagsDialog", "Could not notify parent that this closed because it's not a Listener");
+		
+		super.onDismiss(d);
 	}
 	
 	
@@ -78,7 +89,7 @@ public class TagsDialog extends DialogFragment
 			TextView name = (TextView)v.findViewById(R.id.sub_qtag_name);
 			Tag tag = getItem(position);
 			
-			check.setOnCheckedChangeListener(NoneListener.INSTANCE);
+			check.setOnCheckedChangeListener(null);
 			check.setChecked(query.tags.contains(tag));
 			check.setOnCheckedChangeListener(new CheckHandler(tag));
 			name.setText(tag.name);
@@ -125,5 +136,14 @@ public class TagsDialog extends DialogFragment
 			loading.setVisibility(View.GONE);
 			list.setVisibility(View.VISIBLE);
 		}
+	}
+	
+	
+	
+	/**The parent activity can implement this to be notified when this dialog closes.*/
+	public static interface Listener
+	{
+		/**Called when this dialog closes for any reason.*/
+		public void onQueryTagsClosed();
 	}
 }

@@ -11,6 +11,14 @@ public class Tag
 	public Tag(String name){this.name = name;}
 	
 	
+	@Override public boolean equals(Object other)
+	{
+		if(!(other instanceof Tag))
+			return false;
+		return ((Tag)other).name.equals(name);
+	}
+	
+	
 	
 	/**Can be used to sort tags alphabetically.*/
 	public static final Comparator<Tag> compare = new Comparator<Tag>()

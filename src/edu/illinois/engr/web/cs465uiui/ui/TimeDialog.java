@@ -31,7 +31,7 @@ public class TimeDialog extends DialogFragment
 	{
 		Bundle args = getArguments();
 		if(args == null)
-			Log.w("uiui.ui.TimeDialog", "Args weren't expected to be null");
+			Log.e("uiui.ui.TimeDialog", "Args weren't expected to be null");
 		else if(args.containsKey("null"))
 		{
 			Calendar now = Calendar.getInstance();
@@ -79,7 +79,7 @@ public class TimeDialog extends DialogFragment
 		if(saved == null)
 			loadArgs();
 		else
-			;//TODO saving and loading state
+			dismiss();//TODO saving and loading state
 		refresh();
 		return v;
 	}
@@ -87,13 +87,13 @@ public class TimeDialog extends DialogFragment
 	
 	@Override public void onDismiss(DialogInterface diag)
 	{
-		if(!sent)
+		if(getActivity() instanceof Listener)
 		{
-			if(getActivity() instanceof Listener)
-				((Listener)getActivity()).onTimeNoPick();
-			else
-				Log.w("uiui.ui.TimeDialog", "Could not send chosen time because parent isn't a Listener");
+			Calendar calendar = hasSelectedActual ? fromWidgets() : null;
+			((Listener)getActivity()).onTimePicked(calendar);
 		}
+		else
+			Log.e("uiui.ui.TimeDialog", "Could not send anything because parent activity isn't a Listener; this dialog had no effect");
 		super.onDismiss(diag);
 	}
 	
@@ -107,18 +107,6 @@ public class TimeDialog extends DialogFragment
 			currentDisplay.setText("(none)");
 	}
 	
-	/**Close this dialog and provide a Calendar result to the parent activity
-	 * based on hasSelectedActual and the widgets in this activity.*/
-	private void done()
-	{
-		Calendar calendar = hasSelectedActual ? fromWidgets() : null;
-		if(getActivity() instanceof Listener)
-			((Listener)getActivity()).onTimePicked(calendar);
-		else
-			Log.w("uiui.ui.TimeDialog", "Cannot send chosen time because parent isn't a Listener");
-		sent = true;
-		dismiss();
-	}
 	
 	/**Turns the current state of the date and time widgets into a Calendar.*/
 	private Calendar fromWidgets()
@@ -166,7 +154,7 @@ public class TimeDialog extends DialogFragment
 		@Override public void onClick(View v)
 		{
 			hasSelectedActual = false;
-			done();
+			dismiss();
 		}
 	}
 }

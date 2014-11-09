@@ -2,13 +2,17 @@ package edu.illinois.engr.web.cs465uiui;
 
 import java.util.Calendar;
 
+import com.google.android.gms.common.internal.q;
+
 import edu.illinois.engr.web.cs465uiui.store.QueryData;
+import edu.illinois.engr.web.cs465uiui.text.DateDisplay;
 import edu.illinois.engr.web.cs465uiui.text.Display;
-import edu.illinois.engr.web.cs465uiui.ui.TagsDialog;
+import edu.illinois.engr.web.cs465uiui.ui.QueryTagsDialog;
 import edu.illinois.engr.web.cs465uiui.ui.TimeDialog;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.*;
 
@@ -16,7 +20,7 @@ import android.widget.*;
  * Lets the user enter the time when they want to visit a restaurant,
  * the tags they're looking for,
  * and the location they're looking for restaurants near.*/
-public class QueryActivity extends Activity
+public class QueryActivity extends Activity implements TimeDialog.Listener, QueryTagsDialog.Listener
 {
 	/**The query the user has constructed.*/
 	private Query query;
@@ -42,10 +46,10 @@ public class QueryActivity extends Activity
 	/**Updates the displays of time, location, and tags based on the chosen time, position, and tags.*/
 	private void refresh()
 	{
-		timeDisplay.setText(query.time == null ? "(now)" : query.time.toString());
+		timeDisplay.setText(query.time == null ? "(now)" : DateDisplay.full(query.time));
 		tagsDisplay.setText(Display.tagList(query.tags));
 		allTagsDisplay.setText(query.tags.isEmpty() ? "any tag" : query.allTags ? "all of" : "any of");
-		positionDisplay.setText(query.location == null ? "(my GPS position)" : query.location);
+		positionDisplay.setText(query.position == null ? "(my GPS position)" : query.position);
 	}
 	
 	
@@ -61,20 +65,23 @@ public class QueryActivity extends Activity
 	
 	public void handleEditTags(View v)
 	{
-		new TagsDialog().show(getFragmentManager(), "");
+		new QueryTagsDialog().show(getFragmentManager(), "");
 	}
 	
 	
 	
-	/**Handles dialogs closing.*/
-	private class Handler implements TimeDialog.Listener
-	{
-		@Override public void onTimeNoPick(){}
+	@Override public void onTimeNoPick(){}
 
-		@Override public void onTimePicked(Calendar time)
-		{
-			query.time = time;
-			refresh();
-		}
+	@Override public void onTimePicked(Calendar time)
+	{
+		Log.d("----", "time picked " + (time == null ? "null" : DateDisplay.full(time)));
+		query.time = time;
+		refresh();
+	}
+	
+	@Override public void onQueryTagsClosed()
+	{
+		query = QueryData.load(getApplicationContext());
+		refresh();
 	}
 }

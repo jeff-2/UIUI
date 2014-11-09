@@ -16,8 +16,9 @@ public class Query
 	/**Whether the user is looking for restaurants with all of these tags, as opposed to any of them.*/
 	public boolean allTags;
 	
-	/**What location the user is interested in, or null for the current GPS location.*/
-	public String location;
+	/**The user is interested in restaurants within radius of this position.
+	 * Null means the user's current GPS position.*/
+	public String position;
 	
 	/**The user wants results within this distance of the central position. Must be positive.*/
 	public int radiusMiles;
@@ -31,7 +32,7 @@ public class Query
 		this.time = time;
 		this.tags = tags;
 		this.allTags = allTags;
-		this.location = location;
+		this.position = location;
 		this.radiusMiles = radiusMiles;
 	}
 }
