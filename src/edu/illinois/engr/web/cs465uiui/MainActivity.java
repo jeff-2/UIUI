@@ -25,56 +25,20 @@ public class MainActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		
-		final Button button = (Button) findViewById(R.id.searchButton);
-        button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-            	goToSearchActivity();
-            }
-        });
-        
-        final Button otherButton = (Button) findViewById(R.id.comparisonListButton);
-        otherButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-            	goToComparisonActivity();
-            }
-        });
-        
-        final Button mapButton = (Button) findViewById(R.id.mapButton);
-        mapButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-            	goToComparisonMapActivity();
-            }
-        });
 	}
 	
+	
+	public void goToSearch(View v) {startActivity(new Intent(this, SearchActivity.class));}
+	
+	public void goToQuery(View v) {startActivity(new Intent(this, QueryActivity.class));}
+	
+	//TODO: this is temporary
+	public void goToComparisonList(View v) {startActivity(new Intent(this, ComparisonListActivity.class));}
 	
 	// TODO: this is temporary
-	/**
-	 * Go to comparison activity.
-	 */
-	public void goToComparisonActivity() {
-    	Intent intent = new Intent(this, ComparisonListActivity.class);
-    	startActivity(intent);
-	}
+	public void goToComparisonMap(View v) {startActivity(new Intent(this, ComparisonMapActivity.class));}
 	
-	/**
-	 * Go to search activity.
-	 */
-	public void goToSearchActivity() {
-    	Intent intent = new Intent(this, SearchActivity.class);
-    	startActivity(intent);
-	}
 	
-	// TODO: this is temporary
-	/**
-	 * Go to comparison map activity.
-	 */
-	public void goToComparisonMapActivity() {
-    	Intent intent = new Intent(this, ComparisonMapActivity.class);
-    	startActivity(intent);
-	}
-
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onCreateOptionsMenu(android.view.Menu)
 	 */

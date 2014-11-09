@@ -20,7 +20,7 @@ import edu.illinois.engr.web.cs465uiui.R;
 
 /**
  * Activity to display screen to compare restaurants on a map
- */
+ XXX when the map fails to load, it tries to reconnect endlessly instead of displaying a message*/
 public class ComparisonMapActivity extends MainActivity {
 	private GoogleMap map;
 	

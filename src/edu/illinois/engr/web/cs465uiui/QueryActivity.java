@@ -3,6 +3,7 @@ package edu.illinois.engr.web.cs465uiui;
 import java.util.Calendar;
 
 import edu.illinois.engr.web.cs465uiui.store.QueryData;
+import edu.illinois.engr.web.cs465uiui.text.Display;
 import edu.illinois.engr.web.cs465uiui.ui.TagsDialog;
 import edu.illinois.engr.web.cs465uiui.ui.TimeDialog;
 
@@ -20,7 +21,7 @@ public class QueryActivity extends Activity
 	/**The query the user has constructed.*/
 	private Query query;
 	
-	private TextView timeDisplay, positionDisplay;
+	private TextView timeDisplay, tagsDisplay, allTagsDisplay, positionDisplay;
 	
 	
 	@Override protected void onCreate(Bundle saved)
@@ -29,6 +30,8 @@ public class QueryActivity extends Activity
 		setContentView(R.layout.activity_query);
 		
 		timeDisplay = (TextView)findViewById(R.id.act_query_time);
+		tagsDisplay = (TextView)findViewById(R.id.act_query_tags);
+		allTagsDisplay = (TextView)findViewById(R.id.act_query_alltags);
 		positionDisplay = (TextView)findViewById(R.id.act_query_position);
 		
 		query = QueryData.load(getApplicationContext());
@@ -40,7 +43,8 @@ public class QueryActivity extends Activity
 	private void refresh()
 	{
 		timeDisplay.setText(query.time == null ? "(now)" : query.time.toString());
-		//TODO tags
+		tagsDisplay.setText(Display.tagList(query.tags));
+		allTagsDisplay.setText(query.tags.isEmpty() ? "any tag" : query.allTags ? "all of" : "any of");
 		positionDisplay.setText(query.location == null ? "(my GPS position)" : query.location);
 	}
 	

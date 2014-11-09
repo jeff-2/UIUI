@@ -6,5 +6,7 @@
     
     <!-- horizontal separation between a label and the thing it's labeling -->
     <dimen name="label_hsep">10sp</dimen>
+    <!-- vertical separation between items on the start screen -->
+    <dimen name="start_vsep">23dp</dimen>
 
 </resources>

@@ -11,6 +11,5 @@
 	<string name="ic_dialog_map_description">Map</string>
 	<string name="comparison_text">Results</string>
 	<string name="comparison_sort"><u>Sort</u></string>
-	<string name="title_activity_query">QueryActivity</string>
 
 </resources>
