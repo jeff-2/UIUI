@@ -4,6 +4,7 @@ import java.util.Calendar;
 
 import com.google.android.gms.common.internal.q;
 
+import edu.illinois.engr.web.cs465uiui.comparison.list.ComparisonListActivity;
 import edu.illinois.engr.web.cs465uiui.store.QueryData;
 import edu.illinois.engr.web.cs465uiui.text.DateDisplay;
 import edu.illinois.engr.web.cs465uiui.text.Display;
@@ -11,6 +12,7 @@ import edu.illinois.engr.web.cs465uiui.ui.QueryTagsDialog;
 import edu.illinois.engr.web.cs465uiui.ui.TimeDialog;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -68,13 +70,15 @@ public class QueryActivity extends Activity implements TimeDialog.Listener, Quer
 		new QueryTagsDialog().show(getFragmentManager(), "");
 	}
 	
+
+	public void handleDone(View v){startActivity(new Intent(this, ComparisonListActivity.class));}
+	
 	
 	
 	@Override public void onTimeNoPick(){}
 
 	@Override public void onTimePicked(Calendar time)
 	{
-		Log.d("----", "time picked " + (time == null ? "null" : DateDisplay.full(time)));
 		query.time = time;
 		refresh();
 	}

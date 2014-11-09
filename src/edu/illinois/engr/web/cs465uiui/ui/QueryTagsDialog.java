@@ -76,6 +76,8 @@ public class QueryTagsDialog extends DialogFragment
 	
 	
 	
+	
+	
 	/**Adapts the tags list to the listview.*/
 	private class Adapter extends BaseAdapter
 	{
