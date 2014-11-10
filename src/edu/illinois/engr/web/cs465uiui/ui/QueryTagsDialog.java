@@ -1,11 +1,12 @@
 package edu.illinois.engr.web.cs465uiui.ui;
 
+import java.util.Iterator;
 import java.util.List;
 
 import edu.illinois.engr.web.cs465uiui.Query;
 import edu.illinois.engr.web.cs465uiui.R;
 import edu.illinois.engr.web.cs465uiui.Tag;
-import edu.illinois.engr.web.cs465uiui.net.Fetch;
+import edu.illinois.engr.web.cs465uiui.net.ServerResult;
 import edu.illinois.engr.web.cs465uiui.store.QueryData;
 
 import android.app.DialogFragment;
@@ -116,7 +117,7 @@ public class QueryTagsDialog extends DialogFragment
 	
 	/**Loads tags in a background thread, then displays them.
 	 * Also loads the query.*/
-	private class LoadTask extends AsyncTask<Void, Void, List<Tag>>
+	private class LoadTask extends AsyncTask<Void, Void, ServerResult<List<Tag>>>
 	{
 		@Override protected void onPreExecute()
 		{
@@ -124,17 +125,27 @@ public class QueryTagsDialog extends DialogFragment
 			list.setVisibility(View.GONE);
 		}
 		
-		@Override protected List<Tag> doInBackground(Void... params)
+		@Override protected ServerResult<List<Tag>> doInBackground(Void... params)
 		{
-			return Fetch.allTags();
+			return UIFetch.allTags();
 		}
 		
-		@Override protected void onPostExecute(List<Tag> result)
+		@Override protected void onPostExecute(ServerResult<List<Tag>> result)
 		{
-			tags = result;
-			adapter.notifyDataSetChanged();
-			loading.setVisibility(View.GONE);
-			list.setVisibility(View.VISIBLE);
+			if(result.success)
+			{
+				//unselect tags that no longer exist
+				tags = result.result;
+				for(Iterator<Tag> it = query.tags.iterator(); it.hasNext(); /*nothing*/)
+					if(!tags.contains(it.next()))
+						it.remove();
+				
+				adapter.notifyDataSetChanged();
+				loading.setVisibility(View.GONE);
+				list.setVisibility(View.VISIBLE);
+			}
+			else
+				UIFetch.explainError(result.error, getActivity());
 		}
 	}
 	
