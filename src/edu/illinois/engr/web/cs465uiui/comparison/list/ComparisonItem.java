@@ -5,6 +5,7 @@ import java.util.Map;
 
 import android.graphics.Color;
 
+// TODO: Auto-generated Javadoc
 /**
  * ComparisonItem provides storage for the data displayed in the ComparisonListActivity. Each row of the list consists of
  * a restaurant name, address, distance from a given location and a qualitative indication of the crowdedness of the restaurant. Also
@@ -14,8 +15,14 @@ public class ComparisonItem {
 	
 	/** The Constants representing the Colors used for different crowdedness levels. */
 	public static final int GREEN = Color.rgb(0, 255, 0);
+	
+	/** The Constant YELLOW. */
 	public static final int YELLOW = Color.rgb(255, 255, 0);
+	
+	/** The Constant ORANGE. */
 	public static final int ORANGE = Color.rgb(255, 150, 0);
+	
+	/** The Constant RED. */
 	public static final int RED = Color.rgb(255, 0, 0);
 
 	/** The crowdednessMap - a mapping between text and a numerical representation of crowdedness. */
@@ -45,10 +52,10 @@ public class ComparisonItem {
 	private String restaurantAddress;
 	
 	/** The distance from a specified location. */
-	private String distance;
+	private String restaurantDistance;
 	
 	/** The crowdedness. */
-	private String crowdedness;
+	private String restaurantCrowdedness;
 
 	/**
 	 * Instantiates a new comparison item.
@@ -61,8 +68,18 @@ public class ComparisonItem {
 	public ComparisonItem(String restaurantName, String restaurantAddress, String distance, String crowdedness) {
 		this.restaurantName = restaurantName;
 		this.restaurantAddress = restaurantAddress;
-		this.distance = distance;
-		this.crowdedness = crowdedness;
+		this.restaurantDistance = distance;
+		this.restaurantCrowdedness = crowdedness;
+	}
+	
+	/**
+	 * Instantiates a new comparison item.
+	 */
+	public ComparisonItem() {
+		this.restaurantName = null;
+		this.restaurantAddress = null;
+		this.restaurantDistance = null;
+		this.restaurantCrowdedness = null;
 	}
 
 	/**
@@ -88,8 +105,8 @@ public class ComparisonItem {
 	 *
 	 * @return the distance
 	 */
-	public String getDistance() {
-		return distance;
+	public String getRestaurantDistance() {
+		return restaurantDistance;
 	}
 
 	/**
@@ -97,8 +114,8 @@ public class ComparisonItem {
 	 *
 	 * @return the crowdedness
 	 */
-	public String getCrowdedness() {
-		return crowdedness;
+	public String getRestaurantCrowdedness() {
+		return restaurantCrowdedness;
 	}
 
 	/* (non-Javadoc)
@@ -111,8 +128,8 @@ public class ComparisonItem {
 
 			return ((restaurantName == null && otherItem.restaurantName == null) || (restaurantName.equals(otherItem.restaurantName)))
 					&& ((restaurantAddress == null && otherItem.restaurantName == null) || (restaurantAddress.equals(otherItem.restaurantAddress)))
-					&& ((distance == null && otherItem.distance == null) || (distance.equals(otherItem.distance)))
-					&& ((crowdedness == null && otherItem.crowdedness == null) || (crowdedness.equals(otherItem.crowdedness)));
+					&& ((restaurantDistance == null && otherItem.restaurantDistance == null) || (restaurantDistance.equals(otherItem.restaurantDistance)))
+					&& ((restaurantCrowdedness == null && otherItem.restaurantCrowdedness == null) || (restaurantCrowdedness.equals(otherItem.restaurantCrowdedness)));
 		}
 		return false;
 	}
@@ -125,13 +142,13 @@ public class ComparisonItem {
 	 * @return the int representing the relative distance between this ComparisonItem and the other
 	 */
 	public int compareDistance(ComparisonItem other) {
-		if (other == null || distance.indexOf("mi") <= 0 || other.distance.indexOf("mi") <= 0)
+		if (other == null || restaurantDistance.indexOf("mi") <= 0 || other.restaurantDistance.indexOf("mi") <= 0)
 			return 1;
 		
 		double myDistance, otherDistance;
 		try {
-			myDistance = Double.parseDouble(distance.substring(0, distance.indexOf("mi")));
-			otherDistance = Double.parseDouble(other.distance.substring(0,	other.distance.indexOf("mi")));
+			myDistance = Double.parseDouble(restaurantDistance.substring(0, restaurantDistance.indexOf("mi")));
+			otherDistance = Double.parseDouble(other.restaurantDistance.substring(0,	other.restaurantDistance.indexOf("mi")));
 		} catch (NumberFormatException e) {
 			return 1;
 		}
@@ -151,9 +168,9 @@ public class ComparisonItem {
 	 * @return the int representing the relative crowdedness between this ComparisonItem and the other
 	 */
 	public int compareCrowdedness(ComparisonItem other) {
-		if (other == null || crowdednessMap.get(crowdedness) == null || crowdednessMap.get(other.crowdedness) == null)
+		if (other == null || crowdednessMap.get(restaurantCrowdedness) == null || crowdednessMap.get(other.restaurantCrowdedness) == null)
 			return 1;
 		
-		return crowdednessMap.get(crowdedness).intValue() - crowdednessMap.get(other.crowdedness).intValue();
+		return crowdednessMap.get(restaurantCrowdedness).intValue() - crowdednessMap.get(other.restaurantCrowdedness).intValue();
 	}
 }

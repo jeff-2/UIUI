@@ -66,9 +66,10 @@ public class ComparisonListArrayAdapter extends ArrayAdapter<ComparisonItem> {
 		
         viewHolder.name.setText(getItem(position).getRestaurantName());
         viewHolder.address.setText(getItem(position).getRestaurantAddress());
-        viewHolder.distance.setText(getItem(position).getDistance());
-        viewHolder.crowdedness.setText(getItem(position).getCrowdedness());
-        viewHolder.crowdedness.setTextColor(ComparisonItem.colorMap.get(getItem(position).getCrowdedness()));
+        viewHolder.distance.setText(getItem(position).getRestaurantDistance());
+        viewHolder.crowdedness.setText(getItem(position).getRestaurantCrowdedness());
+        if (ComparisonItem.colorMap.get(getItem(position).getRestaurantCrowdedness()) != null)
+            viewHolder.crowdedness.setTextColor(ComparisonItem.colorMap.get(getItem(position).getRestaurantCrowdedness()));	
 
         return rowView;
 	}
