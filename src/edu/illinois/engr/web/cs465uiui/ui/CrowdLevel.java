@@ -29,7 +29,7 @@ public enum CrowdLevel
 	
 	
 	
-	private static final CrowdLevel[] nonClosed = {packed, crowded, medium, light, empty};
+	private static final CrowdLevel[] nonClosed = {empty, light, medium, crowded, packed};
 	/**Gets a crowdedness value for a floating point number.*/
 	public static CrowdLevel from(float crowdedness)
 	{
