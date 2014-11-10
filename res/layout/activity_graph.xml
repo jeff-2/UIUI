@@ -1,0 +1,33 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:orientation="vertical" >
+
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="0dp"
+		android:layout_weight="3" >
+		
+		<edu.illinois.engr.web.cs465uiui.ui.CrowdednessGraph
+			android:id="@+id/act_graph_graph"
+			android:layout_height="match_parent"
+			android:layout_width="0dp"
+			android:layout_weight="4" />
+		
+		<LinearLayout
+			android:layout_height="match_parent"
+			android:layout_width="0dp"
+			android:layout_weight="1"
+			android:orientation="vertical" >
+			
+		</LinearLayout>		
+	</LinearLayout>
+
+	<LinearLayout
+		android:id="@+id/act_graph_navbar"
+		android:layout_width="match_parent"
+		android:layout_height="0dp"
+		android:layout_weight="1" >
+	</LinearLayout>
+
+</LinearLayout>

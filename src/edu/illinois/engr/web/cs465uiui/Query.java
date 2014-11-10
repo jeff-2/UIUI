@@ -5,7 +5,7 @@ import java.util.Calendar;
 import java.util.List;
 
 /**A set of criteria for restaurants the user wants to compare.*/
-public class Query
+public class Query implements Cloneable
 {
 	/**What date and time the user is interested in; null means right now.*/
 	public Calendar time;
@@ -35,4 +35,6 @@ public class Query
 		this.position = location;
 		this.radiusMiles = radiusMiles;
 	}
+	
+	@Override public Query clone(){return new Query(time, new ArrayList<>(tags), allTags, position, radiusMiles);}
 }

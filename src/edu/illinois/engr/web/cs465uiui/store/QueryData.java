@@ -40,12 +40,16 @@ public class QueryData
 		edit.putInt(KEY_RADIUS, query.radiusMiles);
 		
 		edit.apply();
+		QueryData.query = query.clone();
 	}
 	
 	
-	/**Load the last saved query from storage.*/
+	/**Loads the last saved query from storage, or returns the cached version in memory if it's available.*/
 	public static Query load(Context context)
 	{
+		if(query != null)
+			return query;
+		
 		SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, 0);
 		Query query = new Query();
 		

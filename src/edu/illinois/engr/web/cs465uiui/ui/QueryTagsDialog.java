@@ -29,7 +29,6 @@ public class QueryTagsDialog extends DialogFragment
 	/**Null when not loaded.*/
 	private List<Tag> tags = null;
 	
-	private RadioGroup group;
 	private RadioButton any, all;
 	private View loading;
 	private ListView list;
@@ -40,7 +39,6 @@ public class QueryTagsDialog extends DialogFragment
 	@Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle saved)
 	{
 		View v = inflater.inflate(R.layout.dialog_query_tags, null);
-		group = (RadioGroup)v.findViewById(R.id.diag_qtags_group);
 		any = (RadioButton)v.findViewById(R.id.diag_qtags_any);
 		all = (RadioButton)v.findViewById(R.id.diag_qtags_all);
 		loading = v.findViewById(R.id.diag_qtags_loading);

@@ -2,8 +2,6 @@ package edu.illinois.engr.web.cs465uiui;
 
 import java.util.Calendar;
 
-import com.google.android.gms.common.internal.q;
-
 import edu.illinois.engr.web.cs465uiui.comparison.list.ComparisonListActivity;
 import edu.illinois.engr.web.cs465uiui.store.QueryData;
 import edu.illinois.engr.web.cs465uiui.text.DateDisplay;
@@ -14,7 +12,6 @@ import edu.illinois.engr.web.cs465uiui.ui.TimeDialog;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.*;
 
@@ -56,7 +53,7 @@ public class QueryActivity extends Activity implements TimeDialog.Listener, Quer
 	
 	
 	
-	public void handleEditTime(View v)
+	public void handleEditTime(@SuppressWarnings("unused") View v)
 	{
 		Bundle args = new Bundle();
 		TimeDialog.setupArgs(query.time, args);
@@ -65,13 +62,13 @@ public class QueryActivity extends Activity implements TimeDialog.Listener, Quer
 		dialog.show(getFragmentManager(), null);
 	}
 	
-	public void handleEditTags(View v)
+	public void handleEditTags(@SuppressWarnings("unused") View v)
 	{
 		new QueryTagsDialog().show(getFragmentManager(), "");
 	}
 	
 
-	public void handleDone(View v){startActivity(new Intent(this, ComparisonListActivity.class));}
+	public void handleDone(@SuppressWarnings("unused") View v){startActivity(new Intent(this, ComparisonListActivity.class));}
 	
 	
 	
