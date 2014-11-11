@@ -8,7 +8,7 @@
 		android:layout_height="0dp"
 		android:layout_weight="3" >
 		
-		<edu.illinois.engr.web.cs465uiui.ui.CrowdednessGraph
+		<edu.illinois.engr.web.cs465uiui.ui.CrowdGraph
 			android:id="@+id/act_graph_graph"
 			android:layout_height="match_parent"
 			android:layout_width="0dp"
@@ -19,6 +19,13 @@
 			android:layout_width="0dp"
 			android:layout_weight="1"
 			android:orientation="vertical" >
+
+			<TextView
+				android:id="@+id/textView1"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="Large Text"
+				android:textAppearance="?android:attr/textAppearanceLarge" />
 			
 		</LinearLayout>		
 	</LinearLayout>
@@ -27,7 +34,16 @@
 		android:id="@+id/act_graph_navbar"
 		android:layout_width="match_parent"
 		android:layout_height="0dp"
-		android:layout_weight="1" >
+		android:layout_weight="1"
+		android:gravity="center"
+		android:orientation="horizontal" >
+
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="navbar not implemented"
+				android:textAppearance="?android:attr/textAppearanceLarge" />
+		
 	</LinearLayout>
 
 </LinearLayout>

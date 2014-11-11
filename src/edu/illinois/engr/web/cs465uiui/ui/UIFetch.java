@@ -1,6 +1,7 @@
 package edu.illinois.engr.web.cs465uiui.ui;
 
 import java.io.IOException;
+import java.util.Calendar;
 import java.util.List;
 
 import org.json.JSONException;
@@ -8,6 +9,7 @@ import org.json.JSONException;
 import android.app.Activity;
 import android.app.AlertDialog;
 
+import edu.illinois.engr.web.cs465uiui.Restaurant;
 import edu.illinois.engr.web.cs465uiui.Tag;
 import edu.illinois.engr.web.cs465uiui.net.Fetch;
 import edu.illinois.engr.web.cs465uiui.net.ServerResult;
@@ -20,6 +22,14 @@ public class UIFetch
 	public static ServerResult<List<Tag>> allTags()
 	{
 		try{return new ServerResult<>(Fetch.allTags());}
+		catch(JSONException | IOException ex)
+		{return new ServerResult<>(ex);}
+	}
+	
+	
+	public static ServerResult<List<Float>> crowdednessOn(Calendar date, long restaurantID)
+	{
+		try{return new ServerResult<>(Fetch.crowdednessOn(date, restaurantID));}
 		catch(JSONException | IOException ex)
 		{return new ServerResult<>(ex);}
 	}

@@ -41,17 +41,18 @@ public class Fetch
 				tags.add(new Tag(root.getJSONObject(c).getString("restaurantTag")));
 		}
 		return tags;
-		
-		
-		
-//		//TODO actually load from server
-//		List<Tag> out = new ArrayList<>();
-//		String[] strings = {"Seafood", "Burgers", "Fast", "Pizza"};
-//		for(String s : strings)
-//			out.add(new Tag(s));
-//		return out;
 	}
 	
+	
+	/**Gets the crowdedness of a restaurant on a date.
+	 * Returns a list of crowd levels at evenly-spaced times throughout the day;
+	 * if there are 5 results, they occur at midnight, 6:00, noon, 6:00 PM, and midnight.*/
+	public static List<Float> crowdednessOn(Calendar date, long restaurantID) throws JSONException, IOException
+	{
+		//TODO actually load from server
+		Float[] arr = {null, null, .2f, .6f, .9f, .5f, .6f, .4f, .7f, .8f, .6f, null};
+		return Arrays.asList(arr);
+	}
 	
 	
 	/**Sends the query to the server and gets a response.*/

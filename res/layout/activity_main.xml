@@ -16,7 +16,7 @@
         android:layout_marginTop="@dimen/start_vsep"
         android:text="Search"
         android:onClick="goToSearch" />
-    
+
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -28,14 +28,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/start_vsep"
-        android:text="Result Comparison List"
+        android:text="Result Comparison List (temporary)"
         android:onClick="goToComparisonList" />
     
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/start_vsep"
-        android:text="Comparison Map"
+        android:text="Comparison Map (temporary)"
         android:onClick="goToComparisonMap" />
 
 </LinearLayout>

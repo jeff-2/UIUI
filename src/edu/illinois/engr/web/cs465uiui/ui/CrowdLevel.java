@@ -3,7 +3,8 @@ package edu.illinois.engr.web.cs465uiui.ui;
 import static edu.illinois.engr.web.cs465uiui.utils.HSV.hsv;
 
 /**Internally, crowdedness is a floating-point number in [0,1].
- * This enum breaks that number line up into discrete levels to display to users.*/
+ * This enum breaks that number line up into discrete levels to display to users.
+ * The closed value corresponds to a null crowdedness elsewhere.*/
 public enum CrowdLevel
 {
 	packed ("Packed", hsv(0, .65f, .8f), "Extremely crowded; expect a very slow meal."),

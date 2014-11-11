@@ -1,6 +1,11 @@
 package edu.illinois.engr.web.cs465uiui;
 
 import java.util.Calendar;
+import java.util.List;
+
+import edu.illinois.engr.web.cs465uiui.net.ServerResult;
+import edu.illinois.engr.web.cs465uiui.ui.CrowdGraph;
+import edu.illinois.engr.web.cs465uiui.ui.UIFetch;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -30,30 +35,44 @@ public class GraphActivity extends Activity
 	
 	
 	
-	/**Null when not loaded.*/
-	private Restaurant restaurant;
-	/**Null when not loaded.*/
-	private Calendar date;
+	private CrowdGraph graph;
 	
 	
 	@Override protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_graph);
-		new LoadTask().execute();
+		graph = (CrowdGraph)findViewById(R.id.act_graph_graph);
+		new LoadTask(intentDate(), intentRestaurantId(), this).execute();
 	}
 	
 	
 	
 	/**Loads crowdedness data from the server on a background thread and then displays it on the UI thread.*/
-	private class LoadTask extends AsyncTask<Void, Void, Void>
+	private class LoadTask extends AsyncTask<Void, Void, ServerResult<List<Float>>>
 	{
+		private final Calendar date;
+		private final long restaurant;
+		private final Activity activity;
 		
-		@Override protected Void doInBackground(Void... params)
+		public LoadTask(Calendar date, long restaurantID, Activity activity)
 		{
-			// TODO Auto-generated method stub
-			return null;
+			this.date = date;
+			this.restaurant = restaurantID;
+			this.activity = activity;
 		}
 		
+		@Override protected ServerResult<List<Float>> doInBackground(Void... params)
+		{
+			return UIFetch.crowdednessOn(date, restaurant);
+		}
+		
+		@Override protected void onPostExecute(ServerResult<List<Float>> result)
+		{
+			if(result.success)
+				graph.setData(result.result);
+			else
+				UIFetch.explainError(result.error, activity);
+		}
 	}
 }
