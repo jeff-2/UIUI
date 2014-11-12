@@ -4,6 +4,11 @@ import java.io.IOException;
 import java.net.*;
 import java.util.*;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.*;
 
 import android.util.LruCache;
@@ -14,10 +19,12 @@ import edu.illinois.engr.web.cs465uiui.Restaurant;
 import edu.illinois.engr.web.cs465uiui.Tag;
 import edu.illinois.engr.web.cs465uiui.utils.IOUtil;
 
-/**Fetches simple sets of data from the server.*/
+/**Fetches data from the server.
+ * May cache results.*/
 public class Fetch
 {
-	private static final String URL_TAGS = "http://cs465uiui.web.engr.illinois.edu/tags.php";
+	private static final String URL_TAGS = "http://cs465uiui.web.engr.illinois.edu/tags.php",
+			URL_RESTAURANT = "http://cs465uiui.web.engr.illinois.edu/restaurants.php";
 	
 	
 	/**Null when not loaded.*/
@@ -41,6 +48,30 @@ public class Fetch
 				tags.add(new Tag(root.getJSONObject(c).getString("restaurantTag")));
 		}
 		return tags;
+	}
+	
+	
+	/**Fetches info restaurants with the provided IDs.
+	 * XXX should cache results*/
+	public static List<Restaurant> restaurants(List<Long> ids) throws ClientProtocolException, JSONException, IOException
+	{
+		JSONArray json = new JSONArray();
+		for(Long id : ids)
+			json.put(id);
+		
+		HttpPost post = new HttpPost(URL_RESTAURANT);
+		post.setEntity(new StringEntity(json.toString()));
+		HttpResponse response = new DefaultHttpClient().execute(post);
+		
+		JSONArray root = new JSONArray(IOUtil.readStream(response.getEntity().getContent()));
+		List<Restaurant> restaurants = new ArrayList<>();
+		for(int c = 0; c < root.length(); c++)
+		{
+			JSONObject current = root.getJSONObject(c);
+			restaurants.add(new Restaurant(current.getLong("id"), current.getString("name"), current.getString("location"),
+					(float)current.getDouble("lat"), (float)current.getDouble("lon")));
+		}
+		return restaurants;
 	}
 	
 	

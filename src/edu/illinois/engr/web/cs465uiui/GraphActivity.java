@@ -11,6 +11,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.View;
 
 /**Shows a graph of the crowdedness of a restaurant over a day, and lets the user switch days.
  * The intent used to start this activity must be provided to setup(). TODO not implemented yet*/

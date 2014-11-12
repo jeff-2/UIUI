@@ -21,5 +21,10 @@
     <style name="emphLabel" parent="AppTheme">
     	<item name="android:textColor">@color/emphasis</item>
     </style>
+    
+    <!-- navigation -->
+    <style name="graphNav">
+    	<!-- TODO -->
+    </style>
 
 </resources>
