@@ -14,7 +14,7 @@ import android.os.Bundle;
 import android.view.View;
 
 /**Shows a graph of the crowdedness of a restaurant over a day, and lets the user switch days.
- * The intent used to start this activity must be provided to setup(). TODO not implemented yet*/
+ * The intent used to start this activity must be provided to setup().*/
 public class GraphActivity extends Activity
 {
 	/**Put a restaurant and initial date into the intent that will be used to start this activity.*/

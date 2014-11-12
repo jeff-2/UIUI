@@ -30,6 +30,9 @@ public class Fetch
 	/**Null when not loaded.*/
 	private static List<Tag> tags = null;
 	
+	/**Caches restaurants by id.*/
+	private static final LruCache<Long, Restaurant> restaurantCache = new LruCache<>(100);
+	
 	
 	
 	/**Fetches all tags from the server.*/
@@ -51,9 +54,40 @@ public class Fetch
 	}
 	
 	
+	/**Fetches a single restaurant. May return a cached result.*/
+	public static Restaurant restaurant(long id) throws JSONException, IOException
+	{
+		Restaurant r = restaurantCache.get(id);
+		if(r != null)
+			return r;
+		List<Restaurant> rs = loadRestaurants(Arrays.asList(new Long[]{id}));
+		return rs.get(0);
+	}
+	
+	
 	/**Fetches info restaurants with the provided IDs.
-	 * XXX should cache results*/
-	public static List<Restaurant> restaurants(List<Long> ids) throws ClientProtocolException, JSONException, IOException
+	 * May return cached results.
+	 * Results are in no particular order.*/
+	public static List<Restaurant> restaurants(List<Long> ids) throws JSONException, IOException
+	{
+		List<Restaurant> out = new ArrayList<>();
+		List<Long> needed = new ArrayList<>();
+		for(Long id : ids)
+		{
+			Restaurant r = restaurantCache.get(id);
+			if(r == null)
+				needed.add(id);
+			else
+				out.add(r);
+		}
+		
+		out.addAll(loadRestaurants(needed));
+		return out;
+	}
+	
+	/**Loads restaurants with the provided IDs from the server.
+	 * Also puts them into the cache.*/
+	private static List<Restaurant> loadRestaurants(List<Long> ids) throws JSONException, IOException
 	{
 		JSONArray json = new JSONArray();
 		for(Long id : ids)
@@ -68,8 +102,10 @@ public class Fetch
 		for(int c = 0; c < root.length(); c++)
 		{
 			JSONObject current = root.getJSONObject(c);
-			restaurants.add(new Restaurant(current.getLong("id"), current.getString("name"), current.getString("location"),
-					(float)current.getDouble("lat"), (float)current.getDouble("lon")));
+			Restaurant r = new Restaurant(current.getLong("id"), current.getString("name"), current.getString("location"),
+					(float)current.getDouble("lat"), (float)current.getDouble("lon"));
+			restaurants.add(r);
+			restaurantCache.put(r.id, r);
 		}
 		return restaurants;
 	}

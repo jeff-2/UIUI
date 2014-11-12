@@ -35,6 +35,22 @@ public class UIFetch
 	}
 	
 	
+	public static ServerResult<Restaurant> restaurant(long id)
+	{
+		try{return new ServerResult<>(Fetch.restaurant(id));}
+		catch(JSONException | IOException ex)
+		{return new ServerResult<>(ex);}
+	}
+	
+	
+	public static ServerResult<List<Restaurant>> restaurants(List<Long> ids)
+	{
+		try{return new ServerResult<>(Fetch.restaurants(ids));}
+		catch(JSONException | IOException ex)
+		{return new ServerResult<>(ex);}
+	}
+	
+	
 	
 	/**Launches a dialog notifying the user about a request failure.
 	 * @param error the error the fetch function returned.*/
