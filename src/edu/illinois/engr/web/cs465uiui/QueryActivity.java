@@ -109,7 +109,11 @@ public class QueryActivity extends Activity implements LocationDialog.Listener, 
 		new QueryTagsDialog().show(getFragmentManager(), "");
 	}
 	
-	public void handleDone(@SuppressWarnings("unused") View v){startActivity(new Intent(this, ComparisonListActivity.class));}
+	public void handleDone(@SuppressWarnings("unused") View v)
+	{
+		save();
+		startActivity(new Intent(this, ComparisonListActivity.class));
+	}
 	
 	
 	
