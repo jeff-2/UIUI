@@ -2,13 +2,17 @@
 
 from __future__ import division, generators
 
-from datetime import date, time, timedelta
+from datetime import time
 from random import randint, random, normalvariate, seed
 
 
 print 'WARNING: this file generates a simple script and assumes non-malicious input; ' + \
 		'it is vulnerable to SQL injection\n'
 
+
+
+DAYS_MAP = {'M':'MONDAY', 'T':'TUESDAY', 'W':'WEDNESDAY', 'R':'THURSDAY', 'F':'FRIDAY', \
+		'A':'SATURDAY', 'S':'SUNDAY'}
 
 def next_restaurant_id():
 	next_restaurant_id.counter += 1
@@ -18,24 +22,15 @@ next_restaurant_id.counter = 0
 
 def rand_time(a,b):
 	'''Returns a random time that occurs in the range [a,b]'''
-	print type(a)
 	ma, mb = a.hour * 60 + a.minute, b.hour * 60 + b.minute
 	diff = mb - ma
 	result = int(ma + random() * diff)
 	return time(hour=int(result/60), minute=result%60)
 
-def rand_date():
-	'''Returns a random date that is fairly recent'''
-	return date.today() - timedelta(days=randint(1, 30))
-
 def rand_date_on_any(days):
 	'''Returns a random date that matches any of the provided days.
 	days is a string containing any combination of the characters in MTWRFAS'''
-	weekdays = ['M', 'T', 'W', 'R', 'F', 'A', 'S']
-	while True:
-		current = rand_date()
-		if weekdays[current.weekday()] in days:
-			return current
+	return DAYS_MAP[days[randint(0, len(days) - 1)]]
 		
 
 class Restaurant:
@@ -49,6 +44,7 @@ class Restaurant:
 
 
 class CrowdRecord:
+	'''date is actually a string like "MONDAY"'''
 	def __init__(self, crowd, restaurant, date, time):
 		self.crowd, self.restaurant, self.date, self.time = crowd, restaurant, date, time
 
@@ -70,10 +66,8 @@ class Dataset:
 def put_hours(start, end, days, dataset):
 	'''Adds hours for the last restaurant in the dataset.
 	days contains any combination of characters in "MTWRFAS"'''
-	daymap = {'M':'MONDAY', 'T':'TUESDAY', 'W':'WEDNESDAY', 'R':'THURSDAY', 'F':'FRIDAY', \
-			'A':'SATURDAY', 'S':'SUNDAY'}
 	for k in days:
-		dataset.restaurants[-1].hours.append((start, end, daymap[k]))
+		dataset.restaurants[-1].hours.append((start, end, DAYS_MAP[k]))
 
 
 def populate(count, mean, start, end, days, dataset):
@@ -95,8 +89,13 @@ def populate(count, mean, start, end, days, dataset):
 def create_script(dataset):
 	'''Turns a dataset into an SQL script that will put values in the dataset into a database.
 	Prints the results to standard output.'''
-	print 'INSERT INTO restaurants (id, name, address, Latitude, Longitude) VALUES'
+	print 'DELETE FROM crowding;'
+	print 'DELETE FROM restauranthours;'
+	print 'DELETE FROM tags;'
+	print 'DELETE FROM restaurants;'
+	print '\n'
 	
+	print 'INSERT INTO restaurants (id, name, address, Latitude, Longitude) VALUES'
 	print ',\n'.join(['({dbid}, "{name}", "{loc}", {lat}, {lon})'.format(dbid=r.dbid, name=r.name, loc=r.location,
 			lat=r.lat, lon=r.lon)
 			for r in dataset.restaurants]) + ';\n'
@@ -109,7 +108,7 @@ def create_script(dataset):
 			for r in dataset.restaurants for t in r.hours]) + ';\n'
 	
 	print 'INSERT INTO crowding (crowdedness, restaurantid, day, time) VALUES'
-	print ',\n'.join(['{crowd}, {rid}, {date}, {time})'.format(crowd=c.crowd, rid=c.restaurant.dbid, date=c.date, time=c.time)
+	print ',\n'.join(['({crowd}, {rid}, "{day}", "{time}")'.format(crowd=c.crowd, rid=c.restaurant.dbid, day=c.date, time=c.time)
 			for c in dataset.crowd_records]) + ';\n'
 
 
@@ -118,16 +117,20 @@ if __name__ == '__main__':
 	seed(4)
 	
 	data = Dataset()
-	data.restaurants.append(Restaurant('Panera Bread', '616 E Green St, Champaign, IL', 0, 0, ['Bread', 'Fast', 'Sandwich']))
+	data.restaurants.append(Restaurant('Panera Bread', '616 E Green St, Champaign, IL', 40.110534, -88.229456, ['Bread', 'Fast', 'Sandwich']))
 	put_hours(time(7), time(9+12), 'MTWRF', data)
 	put_hours(time(8), time(9+12), 'AS', data)
 	populate(3, .25, time(7), time(8), 'MTWRF', data)#empty early morning
 	populate(5, .7, time(8), time(10), 'MTWRF', data)#crowded breakfast
 	populate(8, .45, time(10), time(8+12), 'MTWR', data)#medium afternoon and dinner
+	populate(3, .3, time(10), time(9+12), 'F', data)#light friday after noon
 	populate(2, .1, time(8+12), time(9+12), 'MTWR', data)#empty night weekdays
+	populate(6, .75, time(8), time(1+12), 'AS', data)#packed weekend mornings
+	populate(4, .5, time(1+12), time(9+12), 'AS', data)#medium weekend after noon
 	
-	data.restaurants.append(Restaurant('Noodles & Company', '6th & Green St, Champaign, IL', 0, 0, ['Italian']))
+	data.restaurants.append(Restaurant('Noodles & Company', '6th & Green St, Champaign, IL', 40.110482, -88.230605, ['Italian']))
 	put_hours(time(11), time(10+12), 'MTWRFAS', data)
+	populate(4, .3, time(11), time(4,30), 'MTWRF', data)#light daytime
 	
 	data.restaurants.append(Restaurant('Penn Station East Coast Subs', '605 S 6th St, Champaign, IL', 0, 0, ['Sandwich']))
 	put_hours(time(11), time(10+12), 'MTWRFA', data)
