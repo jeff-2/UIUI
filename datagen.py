@@ -9,6 +9,8 @@ from random import randint, random, normalvariate, seed
 print 'WARNING: this file generates a simple script and assumes non-malicious input; ' + \
 		'it is vulnerable to SQL injection\n'
 
+print 'WARING: times at or after midnight are cut off due to schema limitations\n'
+
 
 
 DAYS_MAP = {'M':'MONDAY', 'T':'TUESDAY', 'W':'WEDNESDAY', 'R':'THURSDAY', 'F':'FRIDAY', \
@@ -130,23 +132,60 @@ if __name__ == '__main__':
 	
 	data.restaurants.append(Restaurant('Noodles & Company', '6th & Green St, Champaign, IL', 40.110482, -88.230605, ['Italian']))
 	put_hours(time(11), time(10+12), 'MTWRFAS', data)
-	populate(4, .3, time(11), time(4,30), 'MTWRF', data)#light daytime
+	populate(4, .3, time(11), time(4,30), 'MTWRFAS', data)#light daytime
+	populate(6, .65, time(4,30), time(8+12), 'MTWRFAS', data)#crowded evening
+	populate(3, .35, time(8+12), time(10+12), 'MTWRFAS', data)#light night
 	
-	data.restaurants.append(Restaurant('Penn Station East Coast Subs', '605 S 6th St, Champaign, IL', 0, 0, ['Sandwich']))
+	data.restaurants.append(Restaurant('Penn Station East Coast Subs', '605 S 6th St, Champaign, IL', 40.110764, -88.230630, ['Sandwich']))
 	put_hours(time(11), time(10+12), 'MTWRFA', data)
 	put_hours(time(12), time(8+12), 'S', data)
+	populate(6, .65, time(11), time(1+12), 'MTWRFAS', data)#crowded lunch
+	populate(3, .35, time(1+12), time(5+12), 'MTWRFAS', data)#light afternoon
+	populate(6, .6, time(5+12), time(8+12), 'MTWRFAS', data)#crowded dinner
+	populate(4, .2, time(8+12), time(10+12), 'MTWRFA', data)#empty evening (no Sunday)
 	
-	data.restaurants.append(Restaurant('Penn Station East Coast Subs', '906 W Town Center Blvd, Champaign, IL', 0, 0, ['Sandwich']))
+	data.restaurants.append(Restaurant('Penn Station East Coast Subs', '906 W Town Center Blvd, Champaign, IL', 40.143203, -88.259134, ['Sandwich']))
 	put_hours(time(11), time(10+12), 'MTWRFA', data)
-	put_hours(time(12), time(8+12), 'S', data)
+	put_hours(time(12), time(8+12), 'S', data)			#few visits--little data
+	populate(2, .5, time(11), time(3), 'MTWRFAS', data)#medium lunch
+	populate(4, .5, time(5+12), time(8+12), 'MTWRFAS', data)#medium dinner
 	
-	data.restaurants.append(Restaurant('Potbelly Sandwich Shop', 'Green & 5th, Champaign, IL', 0, 0, ['Sandwich']))
-	put_hours(time(11), time(9+12), 'MTWRFAS', data)
+	data.restaurants.append(Restaurant('Potbelly Sandwich Shop', 'Green & 5th, Champaign, IL', 40.110082, -88.231789, ['Sandwich']))
+	put_hours(time(11), time(9+12), 'MTWRFAS', data)		#light traffic
+	populate(4, .35, time(11), time(1+12), 'MTWRF', data)#light weekday lunch
+	populate(4, .15, time(1+12), time(4+12), 'MTWRF', data)#empty weekday afternoon
+	populate(7, .3, time(4+12), time(7+12), 'MTWRF', data)#light weekday dinner
+	populate(6, .6, time(11), time(3+12), 'AS', data)#medium weekend lunch/afternoon
+	populate(5, .2, time(3+12), time(9+12), 'AS', data)#light weekend dinner/evening
 	
-	data.restaurants.append(Restaurant("Papa Del's Pizza", '206 E Green St, Champaign, IL', 0, 0, ['Pizza', 'Tavern']))
+	data.restaurants.append(Restaurant("Papa Del's Pizza", '206 E Green St, Champaign, IL', 40.110395, -88.236185, ['Pizza', 'Tavern']))
+	put_hours(time(10,30), time(11+12), 'MTWR', data)
+	put_hours(time(10,30), time(3,59), 'FA', data)
+	put_hours(time(11), time(11+12), 'S', data)			#very crowded
+	populate(9, .75, time(10,30), time(2+12), 'MTWRF', data)#crowded weekday lunch
+	populate(6, .45, time(2+12), time(6+12), 'MTWRF', data)#medium weekday afternoon
+	populate(10, .9, time(6+12), time(9+12), 'MTWRF', data)#packed weekday dinner
+	populate(5, .45, time(9+12), time(11+12), 'MTWRF', data)#moderate weekday evening
+	populate(1, .4, time(10,30), time(11), 'A', data)#extra saturday result
+	populate(5, .6, time(11), time(1+12), 'AS', data)#crowded weekend lunch
+	populate(5, .4, time(1+12), time(5+12), 'AS', data)#light weekend afternoon
+	populate(5, .7, time(5+12), time(8+12), 'AS', data)#crowded weekend dinner
+	populate(2, .3, time(8+12), time(11+12), 'AS', data)#light weekend night
 	
-	data.restaurants.append(Restaurant('Maize Mexican Grill', '?', 0, 0, ['Mexican']))
+	data.restaurants.append(Restaurant('Maize Mexican Grill', '?', 40.110409, -88.238956, ['Mexican']))
+	put_hours(time(11), time(10+12), 'MTWR', data)
+	put_hours(time(11), time(11+12), 'FA', data)
+	put_hours(time(11), time(9+12), 'S', data)
+	populate(6, .7, time(11), time(1+12), 'MTWRF', data)#crowded weekday lunch
+	populate(5, .25, time(1), time(5+12), 'MTWRF', data)#light weekday afternoon
+	populate(6, .45, time(5+12), time(8+12), 'MTWRF', data)#medium weekday dinner
+	populate(2, .1, time(8+12), time(10+12), 'MTWRF', data)#empty weekday night
+	populate(6, .6, time(11), time(11+12), 'A', data)#crowded saturday
+	populate(5, .25, time(11), time(9+12), 'S', data)#empty sunday
 	
-	data.restaurants.append(Restaurant('D.P. Dough', '?', 0, 0, ['?']))
+	data.restaurants.append(Restaurant('D.P. Dough', '33 E Green St, Champaign, IL', 40.109969, -88.241056, ['Calzone', 'Italian']))
+	#times cut off at midnight
+	put_hours(time(11), time(23,59), 'MTWRFAS', data)
+	populate(20, .5, time(11), time(23,59), 'MTWRFAS', data)
 	
 	create_script(data)
