@@ -9,6 +9,7 @@ import org.json.JSONException;
 import android.app.Activity;
 import android.app.AlertDialog;
 
+import edu.illinois.engr.web.cs465uiui.CrowdDay;
 import edu.illinois.engr.web.cs465uiui.Restaurant;
 import edu.illinois.engr.web.cs465uiui.Tag;
 import edu.illinois.engr.web.cs465uiui.net.Fetch;
@@ -27,9 +28,9 @@ public class UIFetch
 	}
 	
 	
-	public static ServerResult<List<Float>> crowdednessOn(Calendar date, long restaurantID)
+	public static ServerResult<CrowdDay> crowdednessOn(Calendar date, long restaurantID)
 	{
-		try{return new ServerResult<>(Fetch.crowdednessOn(date, restaurantID));}
+		try{return new ServerResult<>(Fetch.crowdedness(date, restaurantID));}
 		catch(JSONException | IOException ex)
 		{return new ServerResult<>(ex);}
 	}

@@ -2,6 +2,7 @@ package edu.illinois.engr.web.cs465uiui.ui;
 
 import java.util.*;
 
+import edu.illinois.engr.web.cs465uiui.CrowdDay;
 import edu.illinois.engr.web.cs465uiui.utils.HSV;
 
 import android.content.Context;
@@ -19,7 +20,7 @@ public class CrowdGraph extends View
 	
 	
 	
-	private List<Float> data = new ArrayList<>();
+	private CrowdDay data = null;
 	
 	/**Empty when no data is present.*/
 	private List<Rect> displayBars = new ArrayList<>();
@@ -33,9 +34,9 @@ public class CrowdGraph extends View
 	/**Give this graph a set of values to display.
 	 * The graph will display evenly-spaced bars representing the data.
 	 * Null entries are interpreted as "closed".*/
-	public void setData(List<Float> newData)
+	public void setData(CrowdDay day)
 	{
-		data = new ArrayList<>(newData);
+		data = day;
 		refresh();
 	}
 	
@@ -44,14 +45,14 @@ public class CrowdGraph extends View
 	/**Recomputes the rectangles that make up the displayed bars.*/
 	private void refresh()
 	{
-		if(data.isEmpty())
+		if(data == null)
 			return;
-		int widthPerBar = getWidth() / data.size();
+		int widthPerBar = getWidth() / data.values.size();
 		
 		displayBars.clear();
-		for(int c = 0; c < data.size(); c++)
+		for(int c = 0; c < data.values.size(); c++)
 		{
-			Float value = data.get(c);
+			Float value = data.values.get(c).second;
 			if(value == null)
 				continue;
 			int barHeight = (int)(getHeight() * value);

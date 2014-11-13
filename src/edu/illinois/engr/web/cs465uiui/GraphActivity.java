@@ -1,7 +1,7 @@
 package edu.illinois.engr.web.cs465uiui;
 
-import java.util.Calendar;
-import java.util.List;
+import java.util.*;
+import static java.util.Calendar.*;
 
 import edu.illinois.engr.web.cs465uiui.net.ServerResult;
 import edu.illinois.engr.web.cs465uiui.ui.CrowdGraph;
@@ -18,6 +18,10 @@ import android.widget.TextView;
  * The intent used to start this activity must be provided to setup().*/
 public class GraphActivity extends Activity
 {
+	/**How many bars we display per day.*/
+	private static final int BARS = 12;
+	
+	
 	/**Put a restaurant ID and initial date into the intent that will be used to start this activity.*/
 	public static void setup(long restaurantID, Calendar date, Intent intent)
 	{
@@ -56,7 +60,7 @@ public class GraphActivity extends Activity
 	
 	
 	/**Loads crowdedness data from the server on a background thread and then displays it on the UI thread.*/
-	private class LoadTask extends AsyncTask<Void, Void, ServerResult<List<Float>>>
+	private class LoadTask extends AsyncTask<Void, Void, ServerResult<CrowdDay>>
 	{
 		private final Calendar date;
 		private final long id;
@@ -72,7 +76,7 @@ public class GraphActivity extends Activity
 			this.activity = activity;
 		}
 		
-		@Override protected ServerResult<List<Float>> doInBackground(Void... params)
+		@Override protected ServerResult<CrowdDay> doInBackground(Void... params)
 		{
 			ServerResult<Restaurant> result = UIFetch.restaurant(id);
 			if(result.success)
@@ -83,7 +87,7 @@ public class GraphActivity extends Activity
 			return UIFetch.crowdednessOn(date, id);
 		}
 		
-		@Override protected void onPostExecute(ServerResult<List<Float>> result)
+		@Override protected void onPostExecute(ServerResult<CrowdDay> result)
 		{
 			if(result.success)
 			{
