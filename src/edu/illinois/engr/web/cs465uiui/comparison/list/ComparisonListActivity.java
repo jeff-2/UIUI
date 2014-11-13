@@ -188,32 +188,27 @@ public class ComparisonListActivity extends ListActivity {
 		if (data.position == null) {
 
 			final LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-			Location lastKnownLocation = locationManager.getLastKnownLocation(locationManager.getBestProvider(new Criteria(),true));
-			
-			if (lastKnownLocation == null) {
-				LocationListener locationListener = new LocationListener() {
 
-					@Override
-					public void onLocationChanged(Location location) {
-						completeQueryString(sb,  data, location.getLatitude(), location.getLongitude());
-						locationManager.removeUpdates(this);
-					}
+			LocationListener locationListener = new LocationListener() {
 
-					@Override
-					public void onStatusChanged(String provider, int status, Bundle extras) {}
+				@Override
+				public void onLocationChanged(Location location) {
+					completeQueryString(sb,  data, location.getLatitude(), location.getLongitude());
+					locationManager.removeUpdates(this);
+				}
 
-					@Override
-					public void onProviderEnabled(String provider) {}
+				@Override
+				public void onStatusChanged(String provider, int status, Bundle extras) {}
 
-					@Override
-					public void onProviderDisabled(String provider) {} 
-					
-				};
-				locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener); 
-				locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
-			} else {
-				completeQueryString(sb, data, lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
-			}
+				@Override
+				public void onProviderEnabled(String provider) {}
+
+				@Override
+				public void onProviderDisabled(String provider) {} 
+				
+			};
+			locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener); 
+			locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
 		} else {
 			LatLng positionCoords = GeoCoordinates.getCoordinates(data.position);
 			if (positionCoords == null)
