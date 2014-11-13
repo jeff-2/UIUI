@@ -6,9 +6,11 @@ import java.util.*;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.HttpParams;
 import org.json.*;
 
 import android.util.LruCache;
@@ -119,18 +121,5 @@ public class Fetch
 		//TODO actually load from server
 		Float[] arr = {null, null, .2f, .6f, .9f, .5f, .6f, .4f, .7f, .8f, .6f, null};
 		return Arrays.asList(arr);
-	}
-	
-	
-	/**Sends the query to the server and gets a response.*/
-	public static List<ComparisonEntry> query(Query query)
-	{
-		//TODO actually load from server
-		List<ComparisonEntry> out = new ArrayList<>();
-		out.add(new ComparisonEntry(new Restaurant(1, "McDonalds", "someplace", 0, 0), .4f));
-		out.add(new ComparisonEntry(new Restaurant(1, "McDonalds (drive-thru)", "someplace", 0, 0), .5f));
-		out.add(new ComparisonEntry(new Restaurant(1, "Panera", "someplace", 0, 0), .7f));
-		out.add(new ComparisonEntry(new Restaurant(1, "Pizza Hut", "someplace", 0, 0), .2f));
-		return out;
 	}
 }

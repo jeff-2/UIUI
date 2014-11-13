@@ -25,6 +25,7 @@ public class QueryActivity extends Activity implements TimeDialog.Listener, Quer
 	private Query query;
 	
 	private TextView timeDisplay, tagsDisplay, allTagsDisplay, positionDisplay;
+	private EditText radiusInput;
 	
 	
 	@Override protected void onCreate(Bundle saved)
@@ -36,9 +37,31 @@ public class QueryActivity extends Activity implements TimeDialog.Listener, Quer
 		tagsDisplay = (TextView)findViewById(R.id.act_query_tags);
 		allTagsDisplay = (TextView)findViewById(R.id.act_query_alltags);
 		positionDisplay = (TextView)findViewById(R.id.act_query_position);
+		radiusInput = (EditText)findViewById(R.id.act_query_distance);
 		
 		query = QueryData.load(getApplicationContext());
 		refresh();
+	}
+	
+	@Override protected void onStop()
+	{
+		save();
+		super.onStop();
+	}
+	
+	
+	/**Gets user input and saves it.
+	 * Call this when a dialog or other activity is about to be started.*/
+	private void save()
+	{
+		try
+		{
+			query.radiusMiles = Integer.parseInt(radiusInput.getText().toString());
+			if(query.radiusMiles <= 0)
+				query.radiusMiles = Query.DEFAULT_RADIUS;
+		}
+		catch(NumberFormatException e){query.radiusMiles = Query.DEFAULT_RADIUS;}
+		QueryData.save(query, getApplicationContext());
 	}
 	
 	
@@ -48,6 +71,7 @@ public class QueryActivity extends Activity implements TimeDialog.Listener, Quer
 		timeDisplay.setText(query.time == null ? "(now)" : DateDisplay.full(query.time));
 		tagsDisplay.setText(Display.tagList(query.tags));
 		allTagsDisplay.setText(query.tags.isEmpty() ? "any tag" : query.allTags ? "all of" : "any of");
+		radiusInput.setText(String.valueOf(query.radiusMiles));
 		positionDisplay.setText(query.position == null ? "(my GPS position)" : query.position);
 	}
 	
@@ -55,6 +79,7 @@ public class QueryActivity extends Activity implements TimeDialog.Listener, Quer
 	
 	public void handleEditTime(@SuppressWarnings("unused") View v)
 	{
+		save();
 		Bundle args = new Bundle();
 		TimeDialog.setupArgs(query.time, args);
 		TimeDialog dialog = new TimeDialog();
@@ -64,6 +89,7 @@ public class QueryActivity extends Activity implements TimeDialog.Listener, Quer
 	
 	public void handleEditTags(@SuppressWarnings("unused") View v)
 	{
+		save();
 		new QueryTagsDialog().show(getFragmentManager(), "");
 	}
 	

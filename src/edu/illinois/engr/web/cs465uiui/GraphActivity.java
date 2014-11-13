@@ -53,19 +53,28 @@ public class GraphActivity extends Activity
 	private class LoadTask extends AsyncTask<Void, Void, ServerResult<List<Float>>>
 	{
 		private final Calendar date;
-		private final long restaurant;
+		private final long id;
 		private final Activity activity;
+		
+		//acquired in background thread
+		private Restaurant restaurant;
 		
 		public LoadTask(Calendar date, long restaurantID, Activity activity)
 		{
 			this.date = date;
-			this.restaurant = restaurantID;
+			this.id = restaurantID;
 			this.activity = activity;
 		}
 		
 		@Override protected ServerResult<List<Float>> doInBackground(Void... params)
 		{
-			return UIFetch.crowdednessOn(date, restaurant);
+			ServerResult<Restaurant> result = UIFetch.restaurant(id);
+			if(result.success)
+				restaurant = result.result;
+			else
+				return new ServerResult<>(result.error);//XXX kludgy
+				
+			return UIFetch.crowdednessOn(date, id);
 		}
 		
 		@Override protected void onPostExecute(ServerResult<List<Float>> result)

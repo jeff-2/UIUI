@@ -7,6 +7,10 @@ import java.util.List;
 /**A set of criteria for restaurants the user wants to compare.*/
 public class Query implements Cloneable
 {
+	/**The default value for the radius field.*/
+	public static final int DEFAULT_RADIUS = 4;
+	
+	
 	/**What date and time the user is interested in; null means right now.*/
 	public Calendar time;
 	
@@ -25,7 +29,7 @@ public class Query implements Cloneable
 	
 	
 	/**Creates a query with the default values.*/
-	public Query(){this(null, new ArrayList<Tag>(), false, null, 4);}
+	public Query(){this(null, new ArrayList<Tag>(), false, null, DEFAULT_RADIUS);}
 	
 	public Query(Calendar time, List<Tag> tags, boolean allTags, String location, int radiusMiles)
 	{
