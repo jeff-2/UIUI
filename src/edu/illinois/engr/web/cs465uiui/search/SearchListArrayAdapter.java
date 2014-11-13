@@ -2,10 +2,8 @@ package edu.illinois.engr.web.cs465uiui.search;
 
 import java.util.List;
 
-import edu.illinois.engr.web.cs465uiui.R;
-
+import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +13,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import edu.illinois.engr.web.cs465uiui.R;
 
 /**
  * SearchListArrayAdapter provides an ArrayAdapter backing for the SearchActivity containing SearchItems.
@@ -30,7 +29,7 @@ public class SearchListArrayAdapter extends ArrayAdapter<SearchItem> {
 	private static class ViewHolder {
 		public TextView name;
 		public TextView address;
-		public ImageButton map;
+		public ImageButton info;
 	}
 
 	/**
@@ -68,7 +67,7 @@ public class SearchListArrayAdapter extends ArrayAdapter<SearchItem> {
 	        viewHolder = new ViewHolder();
 	        viewHolder.name = (TextView) rowView.findViewById(R.id.searchRestaurantName);
 	        viewHolder.address = (TextView) rowView.findViewById(R.id.searchRestaurantAddress);
-	        viewHolder.map = (ImageButton) rowView.findViewById(R.id.searchButton);
+	        viewHolder.info = (ImageButton) rowView.findViewById(R.id.infoButton);
 	        
 	        rowView.setTag(viewHolder);
 		} else {
@@ -78,26 +77,23 @@ public class SearchListArrayAdapter extends ArrayAdapter<SearchItem> {
         viewHolder.name.setText(getItem(position).getRestaurantName());
         viewHolder.address.setText(getItem(position).getRestaurantAddress());
         
-        viewHolder.map.setOnClickListener(new OnClickListener() {
+        
+        viewHolder.info.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				startSearchMapActivity();
+				String restaurantName = getItem(position).getRestaurantName();
+				String restaurantAddress = getItem(position).getRestaurantAddress();
+				SearchInfoDialog dialog = new SearchInfoDialog(restaurantName, restaurantAddress, context);
+				dialog.show(((Activity) context).getFragmentManager(), null);
 				Log.d("SearchListArrayAdapter", "image button clicked. should redirect to map");
-			}
-
-			private void startSearchMapActivity() {
-				Intent intent = new Intent(context, SearchMapActivity.class);
-				intent.putExtra("restaurantName", getItem(position).getRestaurantName());
-				intent.putExtra("restaurantAddress", getItem(position).getRestaurantAddress());
-		    	context.startActivity(intent);
 			}
         });
         
         // hide map button if no results
         if ("No restaurants match your search".equals(getItem(position).getRestaurantName())) {
-        	((LinearLayout)rowView).removeView(viewHolder.map);
-        } else if (rowView.findViewById(R.id.searchButton) == null) {
-        	((LinearLayout)rowView).addView(viewHolder.map);
+        	((LinearLayout)rowView).removeView(viewHolder.info);
+        } else if (rowView.findViewById(R.id.infoButton) == null) {
+        	((LinearLayout)rowView).addView(viewHolder.info);
         }
 
         return rowView;
