@@ -10,11 +10,13 @@ import java.util.concurrent.ExecutionException;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import edu.illinois.engr.web.cs465uiui.GraphActivity;
 import edu.illinois.engr.web.cs465uiui.Query;
 import edu.illinois.engr.web.cs465uiui.R;
 import edu.illinois.engr.web.cs465uiui.Tag;
 import edu.illinois.engr.web.cs465uiui.comparison.map.ComparisonMapActivity;
 import edu.illinois.engr.web.cs465uiui.comparison.map.GeoCoordinates;
+import edu.illinois.engr.web.cs465uiui.search.SearchItem;
 import edu.illinois.engr.web.cs465uiui.store.QueryData;
 
 import android.app.ListActivity;
@@ -22,6 +24,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.location.Criteria;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
@@ -54,7 +57,7 @@ public class ComparisonListActivity extends ListActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_comparison);
 
-		setupAdapter();
+		buildQueryString();
 		
 		final ImageButton comparisonMapButton = (ImageButton) findViewById(R.id.comparisonMapButton);
 		comparisonMapButton.setOnClickListener(new OnClickListener() {
@@ -143,10 +146,10 @@ public class ComparisonListActivity extends ListActivity {
 		comparisonSortCrowdedness.callOnClick();
 	}
 	
-	private String buildQueryString() {
-		Query data = QueryData.load(this);
+	private void buildQueryString() {
+		final Query data = QueryData.load(this);
 		
-		StringBuilder sb = new StringBuilder();
+		final StringBuilder sb = new StringBuilder();
 		sb.append("?tags=");
 		
 		List<Tag> tags = data.tags;
@@ -181,30 +184,46 @@ public class ComparisonListActivity extends ListActivity {
 		
 		sb.append("&allTags=");
 		sb.append(data.allTags ? "true" : "false");
-		
-		double latitude = -1;
-		double longitude = -1;
-		data.position = "1618 Melrose Park Court Urbana IL";
+
 		if (data.position == null) {
 
-			LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+			final LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 			Location lastKnownLocation = locationManager.getLastKnownLocation(locationManager.getBestProvider(new Criteria(),true));
 			
-			// TODO: some location handling stuff
 			if (lastKnownLocation == null) {
-				return null;
+				LocationListener locationListener = new LocationListener() {
+
+					@Override
+					public void onLocationChanged(Location location) {
+						completeQueryString(sb,  data, location.getLatitude(), location.getLongitude());
+						locationManager.removeUpdates(this);
+					}
+
+					@Override
+					public void onStatusChanged(String provider, int status, Bundle extras) {}
+
+					@Override
+					public void onProviderEnabled(String provider) {}
+
+					@Override
+					public void onProviderDisabled(String provider) {} 
+					
+				};
+				locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener); 
+				locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+			} else {
+				completeQueryString(sb, data, lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
 			}
-			
-			latitude = lastKnownLocation.getLatitude();
-			longitude = lastKnownLocation.getLongitude();
 		} else {
 			LatLng positionCoords = GeoCoordinates.getCoordinates(data.position);
 			if (positionCoords == null)
-				return null;
+				return;
 
-		    latitude = positionCoords.latitude;
-		    longitude = positionCoords.longitude;
+		    completeQueryString(sb, data, positionCoords.latitude, positionCoords.longitude);
 		}
+	}
+	
+	private void completeQueryString(StringBuilder sb, Query data, double latitude, double longitude) {
 		
 		sb.append("&latitude=");
 		sb.append(latitude);
@@ -215,15 +234,14 @@ public class ComparisonListActivity extends ListActivity {
 		sb.append("&radius=");
 		sb.append(data.radiusMiles);
 		
-		return sb.toString();
+		setupAdapter(sb.toString());
 	}
 
 	/**
 	 * Populates and sets the ListAdapter for this activity.
 	 */
-	private void setupAdapter() {
+	private void setupAdapter(String queryString) {
 		
-		String queryString = buildQueryString();
 		Log.d("ComparisonListActivity", "queryString=" + queryString);
 		if (queryString == null)
 			return;
@@ -238,7 +256,7 @@ public class ComparisonListActivity extends ListActivity {
 		}
 		
 		if (items.isEmpty())
-			items.add(new ComparisonItem("No restaurants match your query", "", "", "", -1.0f, -1.0f));
+			items.add(new ComparisonItem(-1l, "No restaurants match your query", "", "", "", -1.0f, -1.0f));
 
 		// update display
 		ListAdapter adapter = new ComparisonListArrayAdapter(this, items);
@@ -254,7 +272,10 @@ public class ComparisonListActivity extends ListActivity {
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
 		Log.d("ComparisonListActivity", "ListView item selected");
-		// TODO: pass on data to graph view screen
+		ComparisonItem item = (ComparisonItem)getListView().getItemAtPosition(position);
+		Intent intent = new Intent(this, GraphActivity.class);
+		GraphActivity.setup(item.getRestaurantId(), Calendar.getInstance(), intent);
+		startActivity(intent);
 	}
 
 	/*

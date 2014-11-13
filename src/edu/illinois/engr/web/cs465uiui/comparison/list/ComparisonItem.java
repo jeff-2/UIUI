@@ -46,6 +46,9 @@ public class ComparisonItem implements Parcelable {
 		colorMap.put("PACKED", RED);
 	}
 
+	/** The restaurantid in the database. */
+	private long restaurantId;
+	
 	/** The restaurant name. */
 	private String restaurantName;
 	
@@ -72,7 +75,8 @@ public class ComparisonItem implements Parcelable {
 	 * @param distance the distance from a specified location
 	 * @param crowdedness the crowdedness
 	 */
-	public ComparisonItem(String restaurantName, String restaurantAddress, String distance, String crowdedness, float restaurantLongitude, float restaurantLatitude) {
+	public ComparisonItem(long restaurantId, String restaurantName, String restaurantAddress, String distance, String crowdedness, float restaurantLongitude, float restaurantLatitude) {
+		this.restaurantId = restaurantId;
 		this.restaurantName = restaurantName;
 		this.restaurantAddress = restaurantAddress;
 		this.restaurantDistance = distance;
@@ -85,12 +89,22 @@ public class ComparisonItem implements Parcelable {
 	 * Instantiates a new comparison item.
 	 */
 	public ComparisonItem() {
+		this.restaurantId = -1l;
 		this.restaurantName = null;
 		this.restaurantAddress = null;
 		this.restaurantDistance = null;
 		this.restaurantCrowdedness = null;
 		this.restaurantLongitude = -1.0f;
 		this.restaurantLongitude = -1.0f;
+	}
+	
+	/**
+	 * Gets the restaurant id.
+	 * 
+	 * @return the restaurant id
+	 */
+	public long getRestaurantId() {
+		return restaurantId;
 	}
 
 	/**
@@ -160,7 +174,8 @@ public class ComparisonItem implements Parcelable {
 					&& ((restaurantDistance == null && otherItem.restaurantDistance == null) || (restaurantDistance.equals(otherItem.restaurantDistance)))
 					&& ((restaurantCrowdedness == null && otherItem.restaurantCrowdedness == null) || (restaurantCrowdedness.equals(otherItem.restaurantCrowdedness)))
 					&& restaurantLongitude == otherItem.restaurantLongitude
-					&& restaurantLatitude == otherItem.restaurantLatitude;
+					&& restaurantLatitude == otherItem.restaurantLatitude
+					&& restaurantId == otherItem.restaurantId;
 		}
 		return false;
 	}
@@ -213,6 +228,7 @@ public class ComparisonItem implements Parcelable {
 
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeLong(restaurantId);
 		dest.writeString(restaurantName);
 		dest.writeString(restaurantAddress);
 		dest.writeString(restaurantDistance);
@@ -232,6 +248,7 @@ public class ComparisonItem implements Parcelable {
 	};
 	
 	private ComparisonItem(Parcel in) {
+		restaurantId = in.readLong();
 		restaurantName = in.readString();
 		restaurantAddress = in.readString();
 		restaurantDistance = in.readString();
