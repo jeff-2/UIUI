@@ -13,11 +13,13 @@ import com.google.android.gms.maps.model.LatLng;
 import edu.illinois.engr.web.cs465uiui.Query;
 import edu.illinois.engr.web.cs465uiui.R;
 import edu.illinois.engr.web.cs465uiui.Tag;
+import edu.illinois.engr.web.cs465uiui.comparison.map.ComparisonMapActivity;
 import edu.illinois.engr.web.cs465uiui.comparison.map.GeoCoordinates;
 import edu.illinois.engr.web.cs465uiui.store.QueryData;
 
 import android.app.ListActivity;
 import android.content.Context;
+import android.content.Intent;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
@@ -28,6 +30,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -41,7 +44,6 @@ public class ComparisonListActivity extends ListActivity {
 	
 	private static String URL = "http://cs465uiui.web.engr.illinois.edu/query.php";
 
-	// TODO: add icon to switch to map comparison
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -52,11 +54,22 @@ public class ComparisonListActivity extends ListActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_comparison);
 
-		// TODO: get data from previous activity
 		setupAdapter();
+		
+		final ImageButton comparisonMapButton = (ImageButton) findViewById(R.id.comparisonMapButton);
+		comparisonMapButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(ComparisonListActivity.this, ComparisonMapActivity.class);
+				intent.putParcelableArrayListExtra("comparisonList", (ArrayList<ComparisonItem>)((ComparisonListArrayAdapter)getListAdapter()).getList());
+				startActivity(intent);
+			}
+			
+		});
 
 		final TextView comparisonSortDistance = (TextView) findViewById(R.id.comparisonSortDistance);
 		final TextView comparisonSortCrowdedness = (TextView) findViewById(R.id.comparisonSortCrowdedness);
+		
 
 		// Sort by distance when user presses on sort over the distance column
 		comparisonSortDistance.setOnClickListener(new OnClickListener() {
@@ -140,15 +153,15 @@ public class ComparisonListActivity extends ListActivity {
 		if (tags == null || tags.size() == 0) {
 			sb.append("null");
 		} else if (tags.size() == 1) {
-			sb.append(tags.get(0));
+			sb.append(tags.get(0).name);
 		} else {
-			sb.append(tags.get(0));
+			sb.append(tags.get(0).name);
 			sb.append(",");
 			for (int i = 1; i < tags.size() - 1; i++) {
-				sb.append(tags.get(i));
+				sb.append(tags.get(i).name);
 				sb.append(",");
 			}
-			sb.append(tags.get(tags.size() - 1));
+			sb.append(tags.get(tags.size() - 1).name);
 		}
 		
 
@@ -171,6 +184,7 @@ public class ComparisonListActivity extends ListActivity {
 		
 		double latitude = -1;
 		double longitude = -1;
+		data.position = "1618 Melrose Park Court Urbana IL";
 		if (data.position == null) {
 
 			LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -208,7 +222,6 @@ public class ComparisonListActivity extends ListActivity {
 	 * Populates and sets the ListAdapter for this activity.
 	 */
 	private void setupAdapter() {
-		// TODO: use data from previous activity
 		
 		String queryString = buildQueryString();
 		Log.d("ComparisonListActivity", "queryString=" + queryString);
@@ -225,7 +238,7 @@ public class ComparisonListActivity extends ListActivity {
 		}
 		
 		if (items.isEmpty())
-			items.add(new ComparisonItem("No restaurants match your query", "", "", ""));
+			items.add(new ComparisonItem("No restaurants match your query", "", "", "", -1.0f, -1.0f));
 
 		// update display
 		ListAdapter adapter = new ComparisonListArrayAdapter(this, items);

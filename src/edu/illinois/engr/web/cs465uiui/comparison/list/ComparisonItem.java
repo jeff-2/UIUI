@@ -4,14 +4,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 import android.graphics.Color;
+import android.os.Parcel;
+import android.os.Parcelable;
 
-// TODO: Auto-generated Javadoc
 /**
  * ComparisonItem provides storage for the data displayed in the ComparisonListActivity. Each row of the list consists of
  * a restaurant name, address, distance from a given location and a qualitative indication of the crowdedness of the restaurant. Also
  * provides the ability to compare ComparisonItems for use in sorting by distance or crowdedness.
  */
-public class ComparisonItem {
+public class ComparisonItem implements Parcelable {
 	
 	/** The Constants representing the Colors used for different crowdedness levels. */
 	public static final int GREEN = Color.rgb(0, 255, 0);
@@ -56,6 +57,12 @@ public class ComparisonItem {
 	
 	/** The crowdedness. */
 	private String restaurantCrowdedness;
+	
+	/** The latitude of the restaurant's location */
+	private float restaurantLongitude;
+	
+	/** The longitude of the restaurant's location */
+	private float restaurantLatitude;
 
 	/**
 	 * Instantiates a new comparison item.
@@ -65,11 +72,13 @@ public class ComparisonItem {
 	 * @param distance the distance from a specified location
 	 * @param crowdedness the crowdedness
 	 */
-	public ComparisonItem(String restaurantName, String restaurantAddress, String distance, String crowdedness) {
+	public ComparisonItem(String restaurantName, String restaurantAddress, String distance, String crowdedness, float restaurantLongitude, float restaurantLatitude) {
 		this.restaurantName = restaurantName;
 		this.restaurantAddress = restaurantAddress;
 		this.restaurantDistance = distance;
 		this.restaurantCrowdedness = crowdedness;
+		this.restaurantLongitude = restaurantLongitude;
+		this.restaurantLatitude = restaurantLatitude;
 	}
 	
 	/**
@@ -80,6 +89,8 @@ public class ComparisonItem {
 		this.restaurantAddress = null;
 		this.restaurantDistance = null;
 		this.restaurantCrowdedness = null;
+		this.restaurantLongitude = -1.0f;
+		this.restaurantLongitude = -1.0f;
 	}
 
 	/**
@@ -117,6 +128,24 @@ public class ComparisonItem {
 	public String getRestaurantCrowdedness() {
 		return restaurantCrowdedness;
 	}
+	
+	/**
+	 * Gets the latitude of the restaurant location.
+	 * 
+	 * @return the latitude
+	 */
+	public float getRestaurantLatitude() {
+		return restaurantLatitude;
+	}
+	
+	/**
+	 * Gets the longitude of the restaurant location.
+	 * 
+	 * @return the longitude
+	 */
+	public float getRestaurantLongitude() {
+		return restaurantLongitude;
+	}
 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
@@ -129,7 +158,9 @@ public class ComparisonItem {
 			return ((restaurantName == null && otherItem.restaurantName == null) || (restaurantName.equals(otherItem.restaurantName)))
 					&& ((restaurantAddress == null && otherItem.restaurantName == null) || (restaurantAddress.equals(otherItem.restaurantAddress)))
 					&& ((restaurantDistance == null && otherItem.restaurantDistance == null) || (restaurantDistance.equals(otherItem.restaurantDistance)))
-					&& ((restaurantCrowdedness == null && otherItem.restaurantCrowdedness == null) || (restaurantCrowdedness.equals(otherItem.restaurantCrowdedness)));
+					&& ((restaurantCrowdedness == null && otherItem.restaurantCrowdedness == null) || (restaurantCrowdedness.equals(otherItem.restaurantCrowdedness)))
+					&& restaurantLongitude == otherItem.restaurantLongitude
+					&& restaurantLatitude == otherItem.restaurantLatitude;
 		}
 		return false;
 	}
@@ -172,5 +203,40 @@ public class ComparisonItem {
 			return 1;
 		
 		return crowdednessMap.get(restaurantCrowdedness).intValue() - crowdednessMap.get(other.restaurantCrowdedness).intValue();
+	}
+	
+	@Override
+	public int describeContents() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeString(restaurantName);
+		dest.writeString(restaurantAddress);
+		dest.writeString(restaurantDistance);
+		dest.writeString(restaurantCrowdedness);
+		dest.writeFloat(restaurantLongitude);
+		dest.writeFloat(restaurantLatitude);
+	}
+	
+	public static final Parcelable.Creator<ComparisonItem> CREATOR = new Parcelable.Creator<ComparisonItem>() {
+		public ComparisonItem createFromParcel(Parcel in) {
+		    return new ComparisonItem(in);
+		}
+
+		public ComparisonItem[] newArray(int size) {
+		    return new ComparisonItem[size];
+		}
+	};
+	
+	private ComparisonItem(Parcel in) {
+		restaurantName = in.readString();
+		restaurantAddress = in.readString();
+		restaurantDistance = in.readString();
+		restaurantCrowdedness = in.readString();
+		restaurantLongitude = in.readFloat();
+		restaurantLongitude = in.readFloat();
 	}
 }

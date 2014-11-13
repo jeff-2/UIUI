@@ -17,6 +17,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import edu.illinois.engr.web.cs465uiui.MainActivity;
 import edu.illinois.engr.web.cs465uiui.R;
+import edu.illinois.engr.web.cs465uiui.comparison.list.ComparisonItem;
 
 /**
  * Activity to display screen to compare restaurants on a map
@@ -43,6 +44,8 @@ public class ComparisonMapActivity extends MainActivity {
 		setContentView(R.layout.comparison_map);
 		map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map))
 				.getMap();
+		
+		List<ComparisonItem> comparisonList = getIntent().getExtras().getParcelableArrayList("comparisonList");
 
 		// TODO: Get address, time, day, radius, and tags from query screen to
 		// filter results
