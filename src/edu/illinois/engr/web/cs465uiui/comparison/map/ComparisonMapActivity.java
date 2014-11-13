@@ -3,6 +3,9 @@ package edu.illinois.engr.web.cs465uiui.comparison.map;
 import java.util.List;
 
 import android.os.Bundle;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -47,13 +50,11 @@ public class ComparisonMapActivity extends MainActivity {
 		
 		List<ComparisonItem> comparisonList = getIntent().getExtras().getParcelableArrayList("comparisonList");
 
-		// TODO: Get address, time, day, radius, and tags from query screen to
-		// filter results
+		// TODO: Get location
 		String address = "Green & Wright Champaign";
 		LatLng mapCenter = GeoCoordinates.getCoordinates(address);
 
-		List<RestaurantMapItem> restaurants = getRestaurants();
-		for (RestaurantMapItem restaurant : restaurants) {
+		for (ComparisonItem restaurant : comparisonList) {
 			setRestaurantMarker(restaurant);
 		}
 		Marker start = map.addMarker(new MarkerOptions()
@@ -61,8 +62,16 @@ public class ComparisonMapActivity extends MainActivity {
 				.position(mapCenter).flat(false).title("Start Location"));
 		start.showInfoWindow();
 
-		map.moveCamera(CameraUpdateFactory.newLatLngZoom(mapCenter, 15));
+		map.moveCamera(CameraUpdateFactory.newLatLngZoom(mapCenter, 13));
 		map.setMyLocationEnabled(true);
+		
+		Button listButton = (Button)this.findViewById(R.id.ListButton);
+		listButton.setOnClickListener(new OnClickListener() {
+		  @Override
+		  public void onClick(View v) {
+		    finish();
+		  }
+		});
 	}
 
 	/**
@@ -72,12 +81,12 @@ public class ComparisonMapActivity extends MainActivity {
 	 * @param restaurant
 	 *            The RestaurantMapItem to put on the map
 	 */
-	private void setRestaurantMarker(RestaurantMapItem restaurant) {
-		int resourceID = getResourceID(restaurant.getCrowdedness());
-		LatLng markerPosition = new LatLng(restaurant.getLatitude(),
-				restaurant.getLongitude());
-		String title = restaurant.getName();
-		String snippet = restaurant.getCrowdedness();
+	private void setRestaurantMarker(ComparisonItem restaurant) {
+		int resourceID = getResourceID(restaurant.getRestaurantCrowdedness());
+		LatLng markerPosition = new LatLng(restaurant.getRestaurantLatitude(),
+				restaurant.getRestaurantLongitude());
+		String title = restaurant.getRestaurantName();
+		String snippet = restaurant.getRestaurantCrowdedness();
 
 		map.addMarker(new MarkerOptions()
 				.icon(BitmapDescriptorFactory.fromResource(resourceID))
@@ -105,18 +114,6 @@ public class ComparisonMapActivity extends MainActivity {
 			return R.drawable.restaurant_red;
 		default:
 			return 0;
-		}
-	}
-
-	/**
-	 * Returns a List of RestaurantMapItems with information pulled from the
-	 * remote database
-	 */
-	private List<RestaurantMapItem> getRestaurants() {
-		try {
-			return new ComparisonMapQuery().execute().get();
-		} catch (Exception e) {
-			return null;
 		}
 	}
 

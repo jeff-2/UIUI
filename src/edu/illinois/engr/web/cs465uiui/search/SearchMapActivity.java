@@ -28,7 +28,7 @@ public class SearchMapActivity extends FragmentActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.comparison_map);
+		setContentView(R.layout.search_map);
 		Bundle extras = getIntent().getExtras();
 		String restaurantName = extras.getString("restaurantName");
 		String restaurantAddress = extras.getString("restaurantAddress");
