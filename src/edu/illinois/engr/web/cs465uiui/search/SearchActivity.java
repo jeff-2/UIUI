@@ -194,6 +194,7 @@ public class SearchActivity extends ListActivity implements AsyncListener<List<S
 	private void prepareProgressDialog() {
 		dialog = new ProgressDialog(this);
 		dialog.setTitle("Getting restaurant information. Please wait...");
+		dialog.setCancelable(false);
 		dialog.show();
 	}
 	

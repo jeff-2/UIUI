@@ -7,7 +7,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.ExecutionException;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -17,17 +16,25 @@ import edu.illinois.engr.web.cs465uiui.R;
 import edu.illinois.engr.web.cs465uiui.Tag;
 import edu.illinois.engr.web.cs465uiui.comparison.map.ComparisonMapActivity;
 import edu.illinois.engr.web.cs465uiui.comparison.map.GeoCoordinates;
-import edu.illinois.engr.web.cs465uiui.search.SearchItem;
+import edu.illinois.engr.web.cs465uiui.search.AsyncListener;
 import edu.illinois.engr.web.cs465uiui.store.QueryData;
 
+import android.app.AlertDialog;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.app.ListActivity;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -44,9 +51,128 @@ import android.widget.TextView;
  * It provides the restaurant names, addresses, distances and crowdedness for all of the restaurants that matched
  * the query criteria. It also provides the ability to sort the list by distance, or crowdedness.
  */
-public class ComparisonListActivity extends ListActivity {
+public class ComparisonListActivity extends ListActivity implements AsyncListener<List<ComparisonItem>> {
 	
-	private static String URL = "http://cs465uiui.web.engr.illinois.edu/query.php";
+	/** The dialog used to display progress of the SearchTask which gathers restaurant information from a server. */
+	private ProgressDialog dialog;
+	
+	/**
+	 * Executes an asynchronous task to request the restaurants matching the user query from the server. Stores the list of restaurants in a fragment
+	 * that is retained if successful. If no network connection is provided, displays a helpful dialog to the user.
+	 */
+	private void loadRestaurants(String queryString) {
+
+		ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+		NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+		if (networkInfo != null && networkInfo.isConnected()) {
+			// fetch data
+			FragmentManager fm = getFragmentManager();
+			ComparisonFragment fragment = (ComparisonFragment)fm.findFragmentByTag("comparison");
+			if (fragment == null) {
+				fragment = new ComparisonFragment();
+				Bundle args = new Bundle();
+				args.putString("queryString", queryString);
+				fragment.setArguments(args);
+				FragmentTransaction transaction = fm.beginTransaction();
+				transaction.add(fragment, "comparison").commit();
+			}
+		} else {
+			showNetworkConnectivityDialog();
+		}
+	}
+	
+	private void loadLocation() {
+		final Query data = QueryData.load(this);
+		
+		if (data.position == null) {
+
+			final LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+			if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+				showGPSDisabledDialog();
+		    } else {
+		    	
+				if (dialog == null)
+					prepareProgressDialog();
+		    	
+				LocationListener locationListener = new LocationListener() {
+	
+					@Override
+					public void onLocationChanged(Location location) {
+						loadRestaurants(buildQueryString(data, location.getLatitude(), location.getLongitude()));
+					}
+	
+					@Override
+					public void onStatusChanged(String provider, int status, Bundle extras) {}
+	
+					@Override
+					public void onProviderEnabled(String provider) {}
+	
+					@Override
+					public void onProviderDisabled(String provider) {} 
+					
+				};
+				locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener); 
+				locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+		    }
+		} else {
+			if (dialog == null)
+				prepareProgressDialog();
+			
+			LatLng positionCoords = GeoCoordinates.getCoordinates(data.position);
+			
+			loadRestaurants(buildQueryString(data, positionCoords.latitude, positionCoords.longitude));
+		}
+	}
+
+	/**
+	 * Displays a network connectivity dialog indicating to the user that functionality will be limited
+	 * due to a lack of GPS data.
+	 */
+    private void showGPSDisabledDialog() {
+    	final AlertDialog.Builder builder = new AlertDialog.Builder(this)
+    	.setMessage("Your GPS is currently disabled. No location information can be gathered until it is available.")
+    	.setTitle("No GPS Info Available")
+    	.setCancelable(false)
+    	.setIcon(android.R.drawable.ic_dialog_alert)
+        .setNegativeButton("Close", new DialogInterface.OnClickListener() {
+        	public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+        	}
+        })
+        .setPositiveButton("Settings", 
+        		new DialogInterface.OnClickListener() {
+			        public void onClick(DialogInterface dialog, int which) {
+			        	startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+		            }
+        		});
+    	builder.create().show();
+    }
+	
+	/**
+	 * Displays a network connectivity dialog indicating to the user that functionality will be limited
+	 * due to a lack of internet access.
+	 */
+	private void showNetworkConnectivityDialog() {
+		Log.d("SearchActivity", "Error:no network connectivity");
+		AlertDialog.Builder builder = new AlertDialog.Builder(this)
+		.setMessage("You are not currently connected to a network. No search results will be available until internet access is available.")
+		.setTitle("No Network Access")
+		.setCancelable(false)
+		.setIcon(android.R.drawable.ic_dialog_alert)
+		.setNegativeButton("Close", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.dismiss();
+			}
+		})
+		.setPositiveButton("Settings", 
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog,	int id) {
+							startActivity(new Intent(Settings.ACTION_WIRELESS_SETTINGS));
+						}
+					});
+		builder.create().show();
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -57,8 +183,6 @@ public class ComparisonListActivity extends ListActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_comparison);
-
-		buildQueryString();
 		
 		final ImageButton comparisonMapButton = (ImageButton) findViewById(R.id.comparisonMapButton);
 		comparisonMapButton.setOnClickListener(new OnClickListener() {
@@ -142,10 +266,15 @@ public class ComparisonListActivity extends ListActivity {
 				comparisonSortDistance.setTextColor(getResources().getColor(android.R.color.black));
 			}
 		});
+		
+		if (!restaurantsBeingLoaded()) {
+			loadLocation();
+		} else {
+			setupAdapter();
+		}
 	}
 	
-	private void buildQueryString() {
-		final Query data = QueryData.load(this);
+	private String buildQueryString(Query data, double latitude, double longitude) {
 		
 		final StringBuilder sb = new StringBuilder();
 		sb.append("?tags=");
@@ -187,41 +316,6 @@ public class ComparisonListActivity extends ListActivity {
 		sb.append("&allTags=");
 		sb.append(data.allTags ? "true" : "false");
 
-		if (data.position == null) {
-
-			final LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-
-			LocationListener locationListener = new LocationListener() {
-
-				@Override
-				public void onLocationChanged(Location location) {
-					completeQueryString(sb,  data, location.getLatitude(), location.getLongitude());
-					locationManager.removeUpdates(this);
-				}
-
-				@Override
-				public void onStatusChanged(String provider, int status, Bundle extras) {}
-
-				@Override
-				public void onProviderEnabled(String provider) {}
-
-				@Override
-				public void onProviderDisabled(String provider) {} 
-				
-			};
-			locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener); 
-			locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
-		} else {
-			LatLng positionCoords = GeoCoordinates.getCoordinates(data.position);
-			if (positionCoords == null)
-				return;
-
-		    completeQueryString(sb, data, positionCoords.latitude, positionCoords.longitude);
-		}
-	}
-	
-	private void completeQueryString(StringBuilder sb, Query data, double latitude, double longitude) {
-		
 		sb.append("&latitude=");
 		sb.append(latitude);
 		
@@ -231,26 +325,19 @@ public class ComparisonListActivity extends ListActivity {
 		sb.append("&radius=");
 		sb.append(data.radiusMiles);
 		
-		setupAdapter(sb.toString());
+		return sb.toString();
 	}
 
 	/**
 	 * Populates and sets the ListAdapter for this activity.
 	 */
-	private void setupAdapter(String queryString) {
+	private void setupAdapter() {
 		
-		Log.d("ComparisonListActivity", "queryString=" + queryString);
-		if (queryString == null)
-			return;
-		ComparisonQueryTask task = new ComparisonQueryTask();
-		List<ComparisonItem> items = new ArrayList<>();
-		try {
-			items = task.execute(URL + queryString).get();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		} catch (ExecutionException e) {
-			e.printStackTrace();
+		ComparisonDataFragment dataFragment = (ComparisonDataFragment)getFragmentManager().findFragmentByTag("comparisonData");
+		while (dataFragment == null) {
+			dataFragment = (ComparisonDataFragment)getFragmentManager().findFragmentByTag("comparisonData");
 		}
+		List<ComparisonItem> items = dataFragment.getRestaurants();
 		
 		if (items.isEmpty())
 			items.add(new ComparisonItem(-1l, "No restaurants match your query", "", "", "", -1.0f, -1.0f));
@@ -306,5 +393,70 @@ public class ComparisonListActivity extends ListActivity {
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+	
+	/**
+	 * Prepares and displays progress dialog for gathering restaurant data from a server.
+	 */
+	private void prepareProgressDialog() {
+		dialog = new ProgressDialog(this);
+		dialog.setTitle("Getting restaurant information and GPS location. Please wait...");
+		dialog.setCancelable(false);
+		dialog.show();
+	}
+	
+	/* (non-Javadoc)
+	 * @see edu.illinois.engr.web.cs465uiui.search.AsyncListener#onPreExecute()
+	 */
+	@Override
+	public void onPreExecute() {
+		if (dialog == null)
+			prepareProgressDialog();
+	}
+
+	/* (non-Javadoc)
+	 * @see edu.illinois.engr.web.cs465uiui.search.AsyncListener#onPostExecute(java.lang.Object)
+	 */
+	@Override
+	public void onPostExecute(List<ComparisonItem> result) {
+		// save data in a fragment
+		FragmentManager fm = getFragmentManager();
+		ComparisonDataFragment dataFragment = new ComparisonDataFragment();
+		dataFragment.setRestaurants(result);
+		fm.beginTransaction().add(dataFragment, "comparisonData").commit();
+		fm.executePendingTransactions();
+		setupAdapter();
+		cleanup();
+	}
+
+	/* (non-Javadoc)
+	 * @see edu.illinois.engr.web.cs465uiui.search.AsyncListener#onCancelled(java.lang.Object)
+	 */
+	@Override
+	public void onCancelled(List<ComparisonItem> result) {
+		cleanup();
+	}
+	
+	/**
+	 * Cleans up the data associated with the request for restaurant data from the server (ComparisonFragment and ProgressDialog). 
+	 */
+	private void cleanup() {
+		if (dialog != null) {
+			dialog.dismiss();
+			dialog = null;
+		}
+		FragmentManager fm = getFragmentManager();
+		Fragment fragment = fm.findFragmentByTag("comparison");
+		if (fragment != null)
+			fm.beginTransaction().remove(fragment).commit();
+	}
+
+	/**
+	 * Checks if restaurants are already loaded or being loaded from the network.
+	 * @return true if the restaurants are being loaded or have already been loaded, otherwise false
+	 */
+	private boolean restaurantsBeingLoaded() {
+		return getFragmentManager().findFragmentByTag("comparison") != null 
+				|| getFragmentManager().findFragmentByTag("comparisonData") != null;
 	}
 }
