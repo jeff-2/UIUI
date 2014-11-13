@@ -132,7 +132,7 @@ public class Fetch
 	public static CrowdDay crowdedness(Calendar date, long restaurantID) throws JSONException, IOException
 	{
 		HttpGet get = new HttpGet(URL_CROWDEDNESS);
-		get.getParams().setLongParameter("restaurantID", restaurantID);
+		get.getParams().setLongParameter("restaurantId", restaurantID);
 		get.getParams().setParameter("day", date.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.getDefault()).toUpperCase());
 		HttpResponse response = new DefaultHttpClient().execute(get);
 		JSONObject root = new JSONObject(IOUtil.readStream(response.getEntity().getContent()));
