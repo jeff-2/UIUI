@@ -118,26 +118,16 @@ public class Fetch
 	}
 	
 	
-	/**Gets the crowdedness of a restaurant on a date.
-	 * Returns a list of crowd levels at evenly-spaced times throughout the day;
-	 * if there are 5 results, they occur at midnight, 6:00, noon, 6:00 PM, and midnight.*/
-	@Deprecated public static List<Float> crowdednessOn(Calendar date, long restaurantID) throws JSONException, IOException
-	{
-		//TODO actually load from server
-		Float[] arr = {null, null, .2f, .6f, .9f, .5f, .6f, .4f, .7f, .8f, .6f, null};
-		return Arrays.asList(arr);
-	}
-	
-	
+	/**Get data about how crowded a single restaurant will be throughout a day.*/
 	public static CrowdDay crowdedness(Calendar date, long restaurantId) throws JSONException, IOException
 	{
+		//doing get.getParams().set... doesn't work for some reason
 		HttpGet get = new HttpGet(URL_CROWDEDNESS + "?restaurantId=" + restaurantId + "&day=" +
 				date.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.getDefault()).toUpperCase());
 		HttpResponse response = new DefaultHttpClient().execute(get);
 		JSONObject root = new JSONObject(IOUtil.readStream(response.getEntity().getContent()));
 		
 		Calendar open = (Calendar)date.clone(), close = (Calendar)date.clone();
-		Log.d("uiui----", root.getString("open") + " -- " + root.getString("close"));
 		putTime(root.getString("open"), open);
 		putTime(root.getString("close"), close);
 		
