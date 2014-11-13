@@ -42,12 +42,14 @@
         	android:layout_width="wrap_content"
         	android:layout_height="wrap_content"
         	android:textAppearance="?android:attr/textAppearanceMedium"
+        	android:paddingRight="@dimen/label_hsep"
         	android:text="Tags:" />
         
         <TextView android:id="@+id/act_query_alltags"
         	android:layout_width="wrap_content"
         	android:layout_height="wrap_content"
         	android:textAppearance="?android:attr/textAppearanceMedium"
+        	android:paddingRight="@dimen/label_hsep"
         	style="@style/emphLabel"
         	android:text="-all/any-" />
         
@@ -90,12 +92,24 @@
         	android:paddingRight="@dimen/label_hsep"
         	android:text="miles of" />
         
-        <TextView android:id="@+id/act_query_position"
+        <!-- only one of these displays at a time -->
+        <TextView android:id="@+id/act_query_position_none"
         	android:layout_width="wrap_content"
         	android:layout_height="wrap_content"
         	android:layout_gravity="center_vertical"
         	android:textAppearance="?android:attr/textAppearanceMedium"
-        	android:text="---position---" />
+        	android:text="(my GPS position)"
+        	style="@style/emphLabel"
+        	android:onClick="handleEditPosition" />
+        
+        <TextView android:id="@+id/act_query_position_custom"
+        	android:layout_width="wrap_content"
+        	android:layout_height="wrap_content"
+        	android:layout_gravity="center_vertical"
+        	android:textAppearance="?android:attr/textAppearanceMedium"
+        	android:text="---position---"
+        	android:visibility="gone"
+        	android:onClick="handleEditPosition" />
 
     </LinearLayout>
 	
