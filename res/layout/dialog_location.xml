@@ -1,0 +1,37 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:gravity="center_horizontal"
+	android:orientation="vertical" >
+	
+	<LinearLayout
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal" >
+	
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:paddingRight="@dimen/label_hsep"
+			android:text="Original Location:" />
+	
+		<TextView android:id="@+id/diag_location_current"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="--location--" />
+	
+	</LinearLayout>
+
+    <Button
+    	android:id="@+id/diag_location_gps"
+    	android:layout_width="match_parent"
+    	android:layout_height="wrap_content"
+    	android:text="my GPS location" />
+
+    <EditText
+    	android:id="@+id/diag_location_input"
+    	android:layout_width="match_parent"
+    	android:layout_height="wrap_content"
+    	android:inputType="textPostalAddress" />
+
+</LinearLayout>
