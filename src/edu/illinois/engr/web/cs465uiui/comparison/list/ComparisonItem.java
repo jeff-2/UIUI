@@ -238,5 +238,5 @@ public class ComparisonItem implements Parcelable {
 		restaurantCrowdedness = in.readString();
 		restaurantLongitude = in.readFloat();
 		restaurantLatitude = in.readFloat();
-	}
+	} 
 }
