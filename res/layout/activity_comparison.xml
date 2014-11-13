@@ -9,13 +9,26 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin" >
 
-    <TextView
-        android:id="@+id/comparisonResult"
-        style="@android:style/TextAppearance.Large"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="@string/comparison_text" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+        
+        <TextView
+	        android:id="@+id/comparisonResult"
+	        style="@android:style/TextAppearance.Large"
+	        android:layout_centerInParent="true"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="@string/comparison_text" />
+    
+	    <ImageButton
+	        android:id="@+id/comparisonMapButton"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentLeft="true"
+	        android:contentDescription="@string/ic_dialog_map_description"
+	        android:src="@android:drawable/ic_dialog_map" />
+    </RelativeLayout>
 
     
 	<LinearLayout

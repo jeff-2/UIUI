@@ -27,6 +27,8 @@ public class ComparisonListArrayAdapter extends ArrayAdapter<ComparisonItem> {
 		public TextView distance;
 		public TextView crowdedness;
 	}
+	
+	private List<ComparisonItem> list;
 
 	/**
 	 * Instantiates a new comparison list array adapter.
@@ -36,6 +38,11 @@ public class ComparisonListArrayAdapter extends ArrayAdapter<ComparisonItem> {
 	 */
 	public ComparisonListArrayAdapter(Context context, List<ComparisonItem> items) {
 		super(context, R.layout.comparison_row, items);
+		this.list = items;
+	}
+	
+	public List<ComparisonItem> getList() {
+		return this.list;
 	}
 	
 	/* (non-Javadoc)
