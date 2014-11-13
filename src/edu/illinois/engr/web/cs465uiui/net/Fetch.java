@@ -129,15 +129,15 @@ public class Fetch
 	}
 	
 	
-	public static CrowdDay crowdedness(Calendar date, long restaurantID) throws JSONException, IOException
+	public static CrowdDay crowdedness(Calendar date, long restaurantId) throws JSONException, IOException
 	{
-		HttpGet get = new HttpGet(URL_CROWDEDNESS);
-		get.getParams().setLongParameter("restaurantId", restaurantID);
-		get.getParams().setParameter("day", date.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.getDefault()).toUpperCase());
+		HttpGet get = new HttpGet(URL_CROWDEDNESS + "?restaurantId=" + restaurantId + "&day=" +
+				date.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.getDefault()).toUpperCase());
 		HttpResponse response = new DefaultHttpClient().execute(get);
 		JSONObject root = new JSONObject(IOUtil.readStream(response.getEntity().getContent()));
 		
 		Calendar open = (Calendar)date.clone(), close = (Calendar)date.clone();
+		Log.d("uiui----", root.getString("open") + " -- " + root.getString("close"));
 		putTime(root.getString("open"), open);
 		putTime(root.getString("close"), close);
 		
