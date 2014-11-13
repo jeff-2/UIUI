@@ -109,8 +109,12 @@ public class Fetch
 		for(int c = 0; c < root.length(); c++)
 		{
 			JSONObject current = root.getJSONObject(c);
+			List<Tag> tags = new ArrayList<>();
+			JSONArray array = current.getJSONArray("tags");
+			for(int d = 0; d < array.length(); d++)
+				tags.add(new Tag(array.getString(d)));
 			Restaurant r = new Restaurant(current.getLong("id"), current.getString("name"), current.getString("location"),
-					(float)current.getDouble("lat"), (float)current.getDouble("lon"));
+					(float)current.getDouble("lat"), (float)current.getDouble("lon"), tags);
 			restaurants.add(r);
 			restaurantCache.put(r.id, r);
 		}
