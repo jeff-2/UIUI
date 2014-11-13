@@ -5,21 +5,16 @@ import java.net.*;
 import java.util.*;
 
 import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.HttpParams;
 import org.json.*;
 
-import android.util.Log;
 import android.util.LruCache;
 import android.util.Pair;
 
-import edu.illinois.engr.web.cs465uiui.ComparisonEntry;
 import edu.illinois.engr.web.cs465uiui.CrowdDay;
-import edu.illinois.engr.web.cs465uiui.Query;
 import edu.illinois.engr.web.cs465uiui.Restaurant;
 import edu.illinois.engr.web.cs465uiui.Tag;
 import edu.illinois.engr.web.cs465uiui.utils.IOUtil;

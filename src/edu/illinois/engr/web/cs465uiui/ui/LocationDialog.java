@@ -1,10 +1,7 @@
 package edu.illinois.engr.web.cs465uiui.ui;
 
-import java.util.Calendar;
-import static java.util.Calendar.*;
 
 import edu.illinois.engr.web.cs465uiui.R;
-import edu.illinois.engr.web.cs465uiui.text.DateDisplay;
 
 import android.app.DialogFragment;
 import android.content.DialogInterface;

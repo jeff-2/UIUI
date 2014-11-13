@@ -4,6 +4,7 @@ import java.util.*;
 import static java.util.Calendar.*;
 
 import edu.illinois.engr.web.cs465uiui.net.ServerResult;
+import edu.illinois.engr.web.cs465uiui.text.DateDisplay;
 import edu.illinois.engr.web.cs465uiui.ui.CrowdGraph;
 import edu.illinois.engr.web.cs465uiui.ui.UIFetch;
 
@@ -11,6 +12,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -51,6 +53,8 @@ public class GraphActivity extends Activity
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_graph);
 		
+		date = intentDate();
+		
 		graph = (CrowdGraph)findViewById(R.id.act_graph_graph);
 		name = (TextView)findViewById(R.id.act_graph_name);
 		location = (TextView)findViewById(R.id.act_graph_location);
@@ -66,11 +70,16 @@ public class GraphActivity extends Activity
 	{
 		navBar.removeAllViews();
 		Calendar current = (Calendar)date.clone();
-		current.add(-4, DATE);
+		current.add(DATE, -4);
 		for(int c = 0; c < 7; c++)
 		{
-			current.add(1, DATE);
+			current.add(DATE, 1);
 			View v = getLayoutInflater().inflate(R.layout.sub_graph_navday, null);
+			TextView name = (TextView)v.findViewById(R.id.sub_navday_name);
+			
+			name.setText(DateDisplay.dateShort(current));
+			if(current.get(DATE) == date.get(DATE))//if this is the selected day
+				name.setBackground(getResources().getDrawable(R.drawable.graph_nav_selected));
 			v.setOnClickListener(new NavHandler((Calendar)current.clone(), this));
 			navBar.addView(v);
 		}
@@ -81,7 +90,7 @@ public class GraphActivity extends Activity
 	/**Loads crowdedness data from the server on a background thread and then displays it on the UI thread.*/
 	private class LoadTask extends AsyncTask<Void, Void, ServerResult<CrowdDay>>
 	{
-		private final Calendar date;
+		private final Calendar myDate;
 		private final long id;
 		private final Activity activity;
 		
@@ -90,7 +99,7 @@ public class GraphActivity extends Activity
 		
 		public LoadTask(Calendar date, long restaurantID, Activity activity)
 		{
-			this.date = date;
+			this.myDate = date;
 			this.id = restaurantID;
 			this.activity = activity;
 		}
@@ -103,16 +112,18 @@ public class GraphActivity extends Activity
 			else
 				return new ServerResult<>(result.error);//XXX kludgy
 				
-			return UIFetch.crowdednessOn(date, id);
+			return UIFetch.crowdednessOn(myDate, id);
 		}
 		
 		@Override protected void onPostExecute(ServerResult<CrowdDay> result)
 		{
 			if(result.success)
 			{
+				date = myDate;
 				name.setText(restaurant.name);
 				location.setText(restaurant.location);
 				graph.setData(result.result);
+				refreshNav();
 			}
 			else
 				UIFetch.explainError(result.error, activity);
@@ -134,7 +145,7 @@ public class GraphActivity extends Activity
 		@Override public void onClick(View v)
 		{
 			date = myDate;
-			new LoadTask(myDate, intentRestaurantId(), activity);
+			new LoadTask(myDate, intentRestaurantId(), activity).execute();
 		}
 	}
 }

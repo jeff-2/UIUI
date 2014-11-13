@@ -12,11 +12,12 @@ import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.View;
 
-/**A view that shows a graph of crowdedness over a time period.*/
+/**A view that shows a graph of crowdedness over a time period.
+ * TODO will Sets its own on-click listener; don't try to catch those events outside.*/
 public class CrowdGraph extends View
 {
 	private static final Paint paint = new Paint();
-	static {paint.setColor(HSV.hsv(0, .5f, .5f));}
+	static {paint.setColor(HSV.hsv(90, .5f, .75f));}
 	
 	
 	
