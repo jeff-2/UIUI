@@ -8,34 +8,38 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="edu.illinois.engr.web.cs465uiui.MainActivity"
     android:orientation="vertical"
-    android:gravity="center_horizontal" >
+    android:gravity="center_horizontal"
+    android:background="@drawable/main_background"   >
 
-    <Button
+    <ImageView
+        android:layout_width="183dp"
+        android:layout_height="183dp"
+        android:layout_marginBottom="34dp"
+        android:src="@drawable/restaurant_food" />
+    
+    <TextView 
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/start_vsep"
-        android:text="Search"
-        android:onClick="goToSearch" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/start_vsep"
-        android:text="Compare Restaurants"
-        android:onClick="goToQuery" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/start_vsep"
-        android:text="Result Comparison List (temporary)"
-        android:onClick="goToComparisonList" />
+        android:text="Welcome" 
+        android:textStyle="bold|italic"
+        android:textSize="30sp" />
     
     <Button
-        android:layout_width="wrap_content"
+        android:layout_width="240dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/start_vsep"
-        android:text="Comparison Map (temporary)"
-        android:onClick="goToComparisonMap" />
+        android:background="#4073AD"
+        android:onClick="goToSearch"
+        android:text="Search"
+        android:textColor="#ffffff" />
+
+    <Button
+        android:layout_width="240dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/start_vsep"
+        android:background="#4073AD"
+        android:onClick="goToQuery"
+        android:text="Compare Restaurants"
+        android:textColor="#ffffff" />
 
 </LinearLayout>
