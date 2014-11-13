@@ -50,7 +50,7 @@ public class SearchInfoDialog extends DialogFragment {
 		for(Tag tag : restaurant.tags) {
 			message += tag.name + ", ";
 		}
-		message = message.substring(0, message.length() - 1);
+		message = message.substring(0, message.length() - 2);
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder
         .setTitle(restaurant.name)
