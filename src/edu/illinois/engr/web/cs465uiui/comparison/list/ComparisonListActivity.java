@@ -3,6 +3,7 @@ package edu.illinois.engr.web.cs465uiui.comparison.list;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
@@ -141,9 +142,6 @@ public class ComparisonListActivity extends ListActivity {
 				comparisonSortDistance.setTextColor(getResources().getColor(android.R.color.black));
 			}
 		});
-
-		// sort by crowdedness initially
-		comparisonSortCrowdedness.callOnClick();
 	}
 	
 	private void buildQueryString() {
@@ -158,6 +156,10 @@ public class ComparisonListActivity extends ListActivity {
 		} else if (tags.size() == 1) {
 			sb.append(tags.get(0).name);
 		} else {
+			Collections.sort(tags, Tag.compare);
+			for (Tag t : tags) {
+				Log.d("tag:", t.name);
+			}
 			sb.append(tags.get(0).name);
 			sb.append(",");
 			for (int i = 1; i < tags.size() - 1; i++) {
@@ -256,6 +258,10 @@ public class ComparisonListActivity extends ListActivity {
 		// update display
 		ListAdapter adapter = new ComparisonListArrayAdapter(this, items);
 		setListAdapter(adapter);
+
+		final TextView comparisonSortCrowdedness = (TextView) findViewById(R.id.comparisonSortCrowdedness);
+		// sort by crowdedness initially
+		comparisonSortCrowdedness.callOnClick();
 	}
 
 	/*
