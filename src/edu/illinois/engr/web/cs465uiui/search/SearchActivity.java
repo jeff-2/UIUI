@@ -108,7 +108,6 @@ public class SearchActivity extends ListActivity implements AsyncListener<List<S
 				filterRestaurants(query);
 				searchView.clearFocus();
 
-				// TODO: onQueryTextSubmit is called twice
 				return true;
 			}
 
