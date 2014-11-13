@@ -44,6 +44,8 @@ public class CrowdGraph extends View
 	/**Recomputes the rectangles that make up the displayed bars.*/
 	private void refresh()
 	{
+		if(data.isEmpty())
+			return;
 		int widthPerBar = getWidth() / data.size();
 		
 		displayBars.clear();
