@@ -1,6 +1,7 @@
 package edu.illinois.engr.web.cs465uiui.search;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import android.app.Activity;
 import android.content.Context;
@@ -14,6 +15,8 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import edu.illinois.engr.web.cs465uiui.R;
+import edu.illinois.engr.web.cs465uiui.Restaurant;
+import edu.illinois.engr.web.cs465uiui.comparison.map.SearchInfoFetch;
 
 /**
  * SearchListArrayAdapter provides an ArrayAdapter backing for the SearchActivity containing SearchItems.
@@ -81,13 +84,21 @@ public class SearchListArrayAdapter extends ArrayAdapter<SearchItem> {
         viewHolder.info.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				String restaurantName = getItem(position).getRestaurantName();
-				String restaurantAddress = getItem(position).getRestaurantAddress();
-				SearchInfoDialog dialog = new SearchInfoDialog(restaurantName, restaurantAddress, context);
+				long restaurantID = getItem(position).getRestaurantId();
+				System.out.println(restaurantID);
+				Restaurant restaurant = null;
+				try {
+					restaurant = new SearchInfoFetch().execute(restaurantID).get();
+				} catch (InterruptedException | ExecutionException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				System.out.println(restaurant);
+				SearchInfoDialog dialog = new SearchInfoDialog(restaurant, context);
 				dialog.show(((Activity) context).getFragmentManager(), null);
 				Log.d("SearchListArrayAdapter", "image button clicked. should redirect to map");
 			}
-        });
+        }); 
         
         // hide map button if no results
         if ("No restaurants match your search".equals(getItem(position).getRestaurantName())) {

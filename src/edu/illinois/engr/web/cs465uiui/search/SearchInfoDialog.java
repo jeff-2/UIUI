@@ -11,28 +11,27 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
 import edu.illinois.engr.web.cs465uiui.R;
+import edu.illinois.engr.web.cs465uiui.Restaurant;
+import edu.illinois.engr.web.cs465uiui.Tag;
 
 /**
  * Activity to display screen when user click on the map button in
  * the search results screen (SearchableActivity)
  */
 public class SearchInfoDialog extends DialogFragment {
-	private String restaurantName;
-	private String restaurantAddress;
+	private Restaurant restaurant;
 	private Context context;
 	
-	public SearchInfoDialog(String restaurantName, String restaurantAddress, Context context) {
-		this.restaurantName = restaurantName;
-		this.restaurantAddress = restaurantAddress;
+	public SearchInfoDialog(Restaurant restaurant, Context context) {
 		this.context = context;
+		this.restaurant = restaurant;
 	}
-	
-	
 
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
+
+	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		LayoutInflater inflater = getActivity().getLayoutInflater();
-		View v = inflater.inflate(R.layout.search_info, null);
-		ImageButton mapButton = (ImageButton)v.findViewById(R.id.mapButton);
+		View infoView = inflater.inflate(R.layout.search_info, null);
+		ImageButton mapButton = (ImageButton)infoView.findViewById(R.id.mapButton);
 		mapButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -41,16 +40,22 @@ public class SearchInfoDialog extends DialogFragment {
 
 			private void startSearchMapActivity() {
 				Intent intent = new Intent(context, SearchMapActivity.class);
-				intent.putExtra("restaurantName", restaurantName);
-				intent.putExtra("restaurantAddress", restaurantAddress);
+				intent.putExtra("restaurantName", restaurant.name);
+				intent.putExtra("restaurantAddress", restaurant.location);
 				context.startActivity(intent);
 			}
         });
+		
+		String message = restaurant.location + "\n\nTags: ";
+		for(Tag tag : restaurant.tags) {
+			message += tag.name + ", ";
+		}
+		message = message.substring(0, message.length() - 1);
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder
-        .setTitle(restaurantName)
-        .setView(v)
-        .setMessage(restaurantAddress + "\n\nTags: Pizza");
+        .setTitle(restaurant.name)
+        .setView(infoView)
+        .setMessage(message);
 		
         return builder.create();
     }
