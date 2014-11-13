@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.TextView;
 
 /**Shows a graph of the crowdedness of a restaurant over a day, and lets the user switch days.
  * The intent used to start this activity must be provided to setup().*/
@@ -36,6 +37,7 @@ public class GraphActivity extends Activity
 	
 	
 	
+	private TextView name, location;
 	private CrowdGraph graph;
 	
 	
@@ -43,7 +45,11 @@ public class GraphActivity extends Activity
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_graph);
+		
 		graph = (CrowdGraph)findViewById(R.id.act_graph_graph);
+		name = (TextView)findViewById(R.id.act_graph_name);
+		location = (TextView)findViewById(R.id.act_graph_location);
+		
 		new LoadTask(intentDate(), intentRestaurantId(), this).execute();
 	}
 	
@@ -80,7 +86,11 @@ public class GraphActivity extends Activity
 		@Override protected void onPostExecute(ServerResult<List<Float>> result)
 		{
 			if(result.success)
+			{
+				name.setText(restaurant.name);
+				location.setText(restaurant.location);
 				graph.setData(result.result);
+			}
 			else
 				UIFetch.explainError(result.error, activity);
 		}
