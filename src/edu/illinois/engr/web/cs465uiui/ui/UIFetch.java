@@ -16,7 +16,7 @@ import edu.illinois.engr.web.cs465uiui.net.ServerResult;
 
 /**Calls through to the Fetch class for server communication,
  * but catches exceptions and puts them in ServerResults.
- * Also has helper functions to communicate errors to the user.*/
+ * Also has a helper function to communicate errors to the user.*/
 public class UIFetch
 {
 	public static ServerResult<List<Tag>> allTags()
@@ -60,9 +60,9 @@ public class UIFetch
 		if(error instanceof JSONException)
 			build.setMessage("There was an internal error while reading the server's response.");
 		else if(error instanceof IOException)
-			build.setMessage("Could not connect to the server successfully--are you connected to the internet?");
+			build.setMessage("Could not contact the server successfully--are you connected to the internet?");
 		else
-			build.setMessage("We have no idea what went wrong.");
+			build.setMessage("Something unexpected went wrong.");
 		build.create().show();
 	}
 }

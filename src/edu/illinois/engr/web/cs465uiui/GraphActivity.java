@@ -17,10 +17,10 @@ import android.view.View;
  * The intent used to start this activity must be provided to setup().*/
 public class GraphActivity extends Activity
 {
-	/**Put a restaurant and initial date into the intent that will be used to start this activity.*/
-	public static void setup(Restaurant restaurant, Calendar date, Intent intent)
+	/**Put a restaurant ID and initial date into the intent that will be used to start this activity.*/
+	public static void setup(long restaurantID, Calendar date, Intent intent)
 	{
-		intent.putExtra("restaurant", restaurant.id);
+		intent.putExtra("restaurant", restaurantID);
 		intent.putExtra("date", date.getTimeInMillis());
 	}
 	

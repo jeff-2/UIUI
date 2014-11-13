@@ -11,7 +11,7 @@ import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.View;
 
-/**A view that shows a graph of crowdedness over a day.*/
+/**A view that shows a graph of crowdedness over a time period.*/
 public class CrowdGraph extends View
 {
 	private static final Paint paint = new Paint();

@@ -1,8 +1,10 @@
 package edu.illinois.engr.web.cs465uiui.search;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
+import edu.illinois.engr.web.cs465uiui.GraphActivity;
 import edu.illinois.engr.web.cs465uiui.R;
 
 import android.app.AlertDialog;
@@ -146,7 +148,7 @@ public class SearchActivity extends ListActivity implements AsyncListener<List<S
 		}
 		Log.d("SearchableActivity", "Num filtered:" + filteredRestaurants.size());
 		if (filteredRestaurants.isEmpty())
-			filteredRestaurants.add(new SearchItem("No restaurants match your search", ""));
+			filteredRestaurants.add(new SearchItem(-1, "No restaurants match your search", ""));
 		ListAdapter adapter = new SearchListArrayAdapter(this, filteredRestaurants);
 		setListAdapter(adapter);
 	}
@@ -154,9 +156,12 @@ public class SearchActivity extends ListActivity implements AsyncListener<List<S
 	/* (non-Javadoc)
 	 * @see android.app.ListActivity#onListItemClick(android.widget.ListView, android.view.View, int, long)
 	 */
-	public void onListItemClick(ListView l, View v, int position, long id) {
+	@Override public void onListItemClick(ListView l, View v, int position, long id) {
 		Log.d("SearchableActivity", "ListView item selected");
-		// TODO: pass on relevant data to graph screen
+		SearchItem item = (SearchItem)getListView().getItemAtPosition(position);
+		Intent intent = new Intent(this, GraphActivity.class);
+		GraphActivity.setup(item.getRestaurantId(), Calendar.getInstance(), intent);
+		startActivity(intent);
 	}
 
 	/* (non-Javadoc)
