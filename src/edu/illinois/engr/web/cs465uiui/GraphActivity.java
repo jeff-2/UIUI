@@ -42,6 +42,8 @@ public class GraphActivity extends Activity
 	
 	/**The date we're currently looking at.*/
 	private Calendar date;
+	/**If true, nav buttons shouldn't do anything.*/
+	private boolean busy = false;
 	
 	private TextView name, location;
 	private CrowdGraph graph;
@@ -59,6 +61,9 @@ public class GraphActivity extends Activity
 		name = (TextView)findViewById(R.id.act_graph_name);
 		location = (TextView)findViewById(R.id.act_graph_location);
 		navBar = (ViewGroup)findViewById(R.id.act_graph_navbar);
+		
+		name.setText("");
+		location.setText("");
 		
 		new LoadTask(intentDate(), intentRestaurantId(), this).execute();
 		refreshNav();
@@ -104,6 +109,11 @@ public class GraphActivity extends Activity
 			this.activity = activity;
 		}
 		
+		@Override protected void onPreExecute()
+		{
+			busy = true;
+		}
+		
 		@Override protected ServerResult<CrowdDay> doInBackground(Void... params)
 		{
 			ServerResult<Restaurant> result = UIFetch.restaurant(id);
@@ -127,6 +137,7 @@ public class GraphActivity extends Activity
 			}
 			else
 				UIFetch.explainError(result.error, activity);
+			busy = false;
 		}
 	}
 	
