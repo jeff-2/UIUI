@@ -127,7 +127,7 @@ public class CrowdGraph extends View
 	
 	
 	
-	/**Handles clicks on itself.*/
+	/**Handles clicks on the graph.*/
 	private class Handler implements View.OnTouchListener
 	{
 		@Override public boolean onTouch(View v, MotionEvent event)
@@ -136,7 +136,7 @@ public class CrowdGraph extends View
 			if(displayBars == null)
 				return false;//not consumed
 			
-			float timeMinutes = event.getAxisValue(MotionEvent.AXIS_X) / getWidth() * 60 * 24;
+			float timeMinutes = (event.getAxisValue(MotionEvent.AXIS_X) + getScrollX()) / getWidth() * 60 * 24;
 			int closestBar = Math.round(timeMinutes / barMinutes);
 			int closestTime = barMinutes * closestBar;
 			if(closestTime < open || closestTime > close)
@@ -165,7 +165,5 @@ public class CrowdGraph extends View
 			
 			return false;
 		}
-
-		
 	}
 }

@@ -52,9 +52,12 @@ public class GraphActivity extends Activity
 	
 	private TextView name, location, focusLevel, focusTime, focusExplanation;
 	private CrowdGraph graph;
+	private View zoomIn, zoomOut, zoomLeft, zoomRight;
 	private ViewGroup navBar;
 	
+	
 	private final SelectionHandler selectionHandler = new SelectionHandler();
+	private final ZoomHandler zoomHandler = new ZoomHandler();
 	
 	
 	@Override protected void onCreate(Bundle savedInstanceState)
@@ -67,12 +70,20 @@ public class GraphActivity extends Activity
 		graph = (CrowdGraph)findViewById(R.id.act_graph_graph);
 		name = (TextView)findViewById(R.id.act_graph_name);
 		location = (TextView)findViewById(R.id.act_graph_location);
-		navBar = (ViewGroup)findViewById(R.id.act_graph_navbar);
 		focusLevel = (TextView)findViewById(R.id.act_graph_focuslevel);
 		focusTime = (TextView)findViewById(R.id.act_graph_focustime);
 		focusExplanation = (TextView)findViewById(R.id.act_graph_focusexplanation);
+		zoomIn = findViewById(R.id.act_graph_zoom_in);
+		zoomOut = findViewById(R.id.act_graph_zoom_out);
+		zoomLeft = findViewById(R.id.act_graph_zoom_left);
+		zoomRight = findViewById(R.id.act_graph_zoom_right);
+		navBar = (ViewGroup)findViewById(R.id.act_graph_navbar);
 		
 		graph.register(selectionHandler);
+		zoomIn.setOnClickListener(zoomHandler);
+		zoomOut.setOnClickListener(zoomHandler);
+		zoomLeft.setOnClickListener(zoomHandler);
+		zoomRight.setOnClickListener(zoomHandler);
 		
 		name.setText("");
 		location.setText("");
@@ -205,5 +216,24 @@ public class GraphActivity extends Activity
 		{
 			focus(day.values.get(dataIndex).first, CrowdLevel.from(day.values.get(dataIndex).second));
 		};
+	}
+	
+	
+	
+	/**Handles zooming the graph.
+	 * Listens for clicks on the zoom-in and zoom-out buttons.*/
+	private class ZoomHandler implements View.OnClickListener
+	{
+		@Override public void onClick(View v)
+		{
+			if(v == zoomIn)
+				graph.setScaleX(2 * graph.getScaleX());
+			else if(v == zoomOut)
+				graph.setScaleX(graph.getScaleX() / 2);
+			else if(v == zoomLeft)
+				graph.setScrollX(graph.getScrollX() - 150);
+			else if(v == zoomRight)
+				graph.setScrollX(graph.getScrollX() + 150);
+		}
 	}
 }

@@ -34,8 +34,11 @@ public enum CrowdLevel
 	/**Gets a crowdedness value for a floating point number.*/
 	public static CrowdLevel from(float crowdedness)
 	{
-		//TODO does this algorithm work? (consider unit testing)
 		int index = (int)Math.floor(crowdedness * nonClosed.length);
+		if(index < 0)
+			index = 0;
+		if(index >= nonClosed.length)
+			index = nonClosed.length - 1;
 		return nonClosed[index];
 	}
 }
