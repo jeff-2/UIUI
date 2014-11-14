@@ -245,7 +245,7 @@ public class ComparisonListActivity extends ListActivity implements AsyncListene
 					});
 				}
 				comparisonSortDistance.setTextColor(getResources().getColor(android.R.color.holo_blue_light));
-				comparisonSortCrowdedness.setTextColor(getResources().getColor(android.R.color.black));
+				comparisonSortCrowdedness.setTextColor(getResources().getColor(android.R.color.white));
 			}
 		});
 
@@ -279,7 +279,7 @@ public class ComparisonListActivity extends ListActivity implements AsyncListene
 					});
 				}
 				comparisonSortCrowdedness.setTextColor(getResources().getColor(android.R.color.holo_blue_light));
-				comparisonSortDistance.setTextColor(getResources().getColor(android.R.color.black));
+				comparisonSortDistance.setTextColor(getResources().getColor(android.R.color.white));
 			}
 		});
 		
