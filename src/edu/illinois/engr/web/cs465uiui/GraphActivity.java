@@ -124,7 +124,7 @@ public class GraphActivity extends Activity
 		{
 			focusLevel.setText("");
 			focusTime.setText("");
-			focusExplanation.setText("");
+			focusExplanation.setText("Click graph for info.");
 		}
 		else
 		{

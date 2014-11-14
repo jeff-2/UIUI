@@ -1,5 +1,6 @@
 <resources>
-	<color name="emphasis">#004488</color>
+	<color name="emphasis">#0066BB</color>
+	<color name="softemph">#004488</color>
 	<color name="weak">#333</color>
 	<color name="strong">#888</color>
 </resources>

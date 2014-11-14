@@ -11,7 +11,6 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -41,7 +40,7 @@ public class CrowdGraph extends View
 	public CrowdGraph(Context context, AttributeSet attr)
 	{
 		super(context, attr);
-		paintBars.setColor(context.getResources().getColor(R.color.emphasis));
+		paintBars.setColor(context.getResources().getColor(R.color.softemph));
 		paintClosed.setColor(context.getResources().getColor(R.color.weak));
 		setOnTouchListener(handler);
 	}
