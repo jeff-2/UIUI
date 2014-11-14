@@ -126,6 +126,12 @@ public class ComparisonListActivity extends ListActivity implements AsyncListene
 			
 			LatLng positionCoords = GeoCoordinates.getCoordinates(data.position);
 			
+			FragmentManager fm = getFragmentManager();
+			PositionDataFragment dataFragment = new PositionDataFragment();
+			dataFragment.setLatLng(positionCoords);
+			fm.beginTransaction().add(dataFragment, "positionData").commit();
+			fm.executePendingTransactions();
+			
 			loadRestaurants(buildQueryString(data, positionCoords.latitude, positionCoords.longitude));
 		}
 	}
