@@ -102,7 +102,7 @@
 			android:id="@+id/act_graph_zoom_reset"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:text="O" />
+			android:text="Reset" />
 		
 	</LinearLayout>
 	
