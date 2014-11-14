@@ -99,6 +99,12 @@ public class ComparisonListActivity extends ListActivity implements AsyncListene
 					@Override
 					public void onLocationChanged(Location location) {
 						loadRestaurants(buildQueryString(data, location.getLatitude(), location.getLongitude()));
+						locationManager.removeUpdates(this);
+						FragmentManager fm = getFragmentManager();
+						PositionDataFragment dataFragment = new PositionDataFragment();
+						dataFragment.setLatLng(new LatLng(location.getLatitude(), location.getLongitude()));
+						fm.beginTransaction().add(dataFragment, "positionData").commit();
+						fm.executePendingTransactions();
 					}
 	
 					@Override
@@ -189,7 +195,11 @@ public class ComparisonListActivity extends ListActivity implements AsyncListene
 			@Override
 			public void onClick(View v) {
 				Intent intent = new Intent(ComparisonListActivity.this, ComparisonMapActivity.class);
-				intent.putParcelableArrayListExtra("comparisonList", (ArrayList<ComparisonItem>)((ComparisonListArrayAdapter)getListAdapter()).getList());
+				ComparisonDataFragment dataFragment = (ComparisonDataFragment)getFragmentManager().findFragmentByTag("comparisonData");
+				intent.putParcelableArrayListExtra("comparisonList", (ArrayList<ComparisonItem>)dataFragment.getRestaurants());
+				PositionDataFragment posFragment = (PositionDataFragment)getFragmentManager().findFragmentByTag("positionData");
+				intent.putExtra("longitude", posFragment.getLatLng().longitude);
+				intent.putExtra("latitude", posFragment.getLatLng().latitude);
 				startActivity(intent);
 			}
 			
@@ -334,9 +344,6 @@ public class ComparisonListActivity extends ListActivity implements AsyncListene
 	private void setupAdapter() {
 		
 		ComparisonDataFragment dataFragment = (ComparisonDataFragment)getFragmentManager().findFragmentByTag("comparisonData");
-		while (dataFragment == null) {
-			dataFragment = (ComparisonDataFragment)getFragmentManager().findFragmentByTag("comparisonData");
-		}
 		List<ComparisonItem> items = dataFragment.getRestaurants();
 		
 		if (items.isEmpty())

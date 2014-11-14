@@ -2,11 +2,7 @@ package edu.illinois.engr.web.cs465uiui.comparison.map;
 
 import java.util.List;
 
-import android.content.Context;
-import android.location.Criteria;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
+import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -23,16 +19,13 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import edu.illinois.engr.web.cs465uiui.MainActivity;
-import edu.illinois.engr.web.cs465uiui.Query;
 import edu.illinois.engr.web.cs465uiui.R;
 import edu.illinois.engr.web.cs465uiui.comparison.list.ComparisonItem;
-import edu.illinois.engr.web.cs465uiui.store.QueryData;
 
 /**
  * Activity to display screen to compare restaurants on a map
  XXX when the map fails to load, it tries to reconnect endlessly instead of displaying a message*/
-public class ComparisonMapActivity extends MainActivity {
+public class ComparisonMapActivity extends Activity {
 	private GoogleMap map;
 	private List<ComparisonItem> comparisonList;
 	
@@ -57,41 +50,12 @@ public class ComparisonMapActivity extends MainActivity {
 				.getMap();
 		
 		comparisonList = getIntent().getExtras().getParcelableArrayList("comparisonList");
-		final Query data = QueryData.load(this);
-		if (data.position == null) {
-
-			final LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-			
-			
-			LocationListener locationListener = new LocationListener() {
-
-				@Override
-				public void onLocationChanged(Location location) {
-					LatLng mapCenter = new LatLng(location.getLatitude(), location.getLongitude());
-					setMarkers(mapCenter);
-					locationManager.removeUpdates(this);
-				}
-
-				@Override
-				public void onStatusChanged(String provider, int status, Bundle extras) {}
-
-				@Override
-				public void onProviderEnabled(String provider) {}
-
-				@Override
-				public void onProviderDisabled(String provider) {} 
-				
-			};
-			locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener); 
-			locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
 		
-			
-		} 
-		else {
-			LatLng mapCenter = GeoCoordinates.getCoordinates(data.position);
-			setMarkers(mapCenter);
-		}
-
+		double latitude = getIntent().getExtras().getDouble("latitude");
+		double longitude = getIntent().getExtras().getDouble("longitude");
+		
+		LatLng mapCenter = new LatLng(latitude, longitude);
+		setMarkers(mapCenter);
 	}
 
 	/**
@@ -147,7 +111,6 @@ public class ComparisonMapActivity extends MainActivity {
 		start.showInfoWindow();
 
 		map.moveCamera(CameraUpdateFactory.newLatLngZoom(mapCenter, 13));
-		map.setMyLocationEnabled(true);
 		
 		Button listButton = (Button)this.findViewById(R.id.ListButton);
 		listButton.setOnClickListener(new OnClickListener() {
@@ -157,5 +120,4 @@ public class ComparisonMapActivity extends MainActivity {
 		  }
 		});
 	}
-
 }
