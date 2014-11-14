@@ -109,7 +109,8 @@ public class ComparisonMapActivity extends Activity {
 				.icon(BitmapDescriptorFactory.defaultMarker())
 				.position(mapCenter).flat(false).title("Start Location"));
 		start.showInfoWindow();
-
+		
+		map.setMyLocationEnabled(true);
 		map.moveCamera(CameraUpdateFactory.newLatLngZoom(mapCenter, 13));
 		
 		Button listButton = (Button)this.findViewById(R.id.ListButton);
