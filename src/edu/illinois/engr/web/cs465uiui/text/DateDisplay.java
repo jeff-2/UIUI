@@ -26,6 +26,6 @@ public class DateDisplay
 	/**Displays the time only.*/
 	public static String time(Calendar cal)
 	{
-		return cal.get(HOUR_OF_DAY) + ":" + cal.get(MINUTE);
+		return cal.get(HOUR_OF_DAY) + ":" + String.format("%02d", cal.get(MINUTE));
 	}
 }
