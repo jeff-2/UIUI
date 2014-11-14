@@ -34,6 +34,7 @@ import edu.illinois.engr.web.cs465uiui.store.QueryData;
  XXX when the map fails to load, it tries to reconnect endlessly instead of displaying a message*/
 public class ComparisonMapActivity extends MainActivity {
 	private GoogleMap map;
+	private List<ComparisonItem> comparisonList;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -55,62 +56,42 @@ public class ComparisonMapActivity extends MainActivity {
 		map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map))
 				.getMap();
 		
-		List<ComparisonItem> comparisonList = getIntent().getExtras().getParcelableArrayList("comparisonList");
-		LatLng mapCenter = new LatLng(0,0);
-		// TODO: Get location
+		comparisonList = getIntent().getExtras().getParcelableArrayList("comparisonList");
 		final Query data = QueryData.load(this);
 		if (data.position == null) {
 
 			final LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-			Location lastKnownLocation = locationManager.getLastKnownLocation(locationManager.getBestProvider(new Criteria(),true));
 			
-			if (lastKnownLocation == null) {
-				LocationListener locationListener = new LocationListener() {
-
-					@Override
-					public void onLocationChanged(Location location) {
-						locationManager.removeUpdates(this);
-					}
-
-					@Override
-					public void onStatusChanged(String provider, int status, Bundle extras) {}
-
-					@Override
-					public void onProviderEnabled(String provider) {}
-
-					@Override
-					public void onProviderDisabled(String provider) {} 
-					
-				};
-				locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener); 
-				locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
-			} else {
-				mapCenter = new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
-			}
-		} else {
-			mapCenter = GeoCoordinates.getCoordinates(data.position);
 			
-		}
-		String address = "Green & Wright Champaign";
+			LocationListener locationListener = new LocationListener() {
 
-		for (ComparisonItem restaurant : comparisonList) {
-			setRestaurantMarker(restaurant);
-		}
-		Marker start = map.addMarker(new MarkerOptions()
-				.icon(BitmapDescriptorFactory.defaultMarker())
-				.position(mapCenter).flat(false).title("Start Location"));
-		start.showInfoWindow();
+				@Override
+				public void onLocationChanged(Location location) {
+					LatLng mapCenter = new LatLng(location.getLatitude(), location.getLongitude());
+					setMarkers(mapCenter);
+					locationManager.removeUpdates(this);
+				}
 
-		map.moveCamera(CameraUpdateFactory.newLatLngZoom(mapCenter, 13));
-		map.setMyLocationEnabled(true);
+				@Override
+				public void onStatusChanged(String provider, int status, Bundle extras) {}
+
+				@Override
+				public void onProviderEnabled(String provider) {}
+
+				@Override
+				public void onProviderDisabled(String provider) {} 
+				
+			};
+			locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener); 
+			locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
 		
-		Button listButton = (Button)this.findViewById(R.id.ListButton);
-		listButton.setOnClickListener(new OnClickListener() {
-		  @Override
-		  public void onClick(View v) {
-		    finish();
-		  }
-		});
+			
+		} 
+		else {
+			LatLng mapCenter = GeoCoordinates.getCoordinates(data.position);
+			setMarkers(mapCenter);
+		}
+
 	}
 
 	/**
@@ -154,6 +135,27 @@ public class ComparisonMapActivity extends MainActivity {
 		default:
 			return 0;
 		}
+	}
+	
+	private void setMarkers(LatLng mapCenter) {
+		for (ComparisonItem restaurant : comparisonList) {
+			setRestaurantMarker(restaurant);
+		}
+		Marker start = map.addMarker(new MarkerOptions()
+				.icon(BitmapDescriptorFactory.defaultMarker())
+				.position(mapCenter).flat(false).title("Start Location"));
+		start.showInfoWindow();
+
+		map.moveCamera(CameraUpdateFactory.newLatLngZoom(mapCenter, 13));
+		map.setMyLocationEnabled(true);
+		
+		Button listButton = (Button)this.findViewById(R.id.ListButton);
+		listButton.setOnClickListener(new OnClickListener() {
+		  @Override
+		  public void onClick(View v) {
+		    finish();
+		  }
+		});
 	}
 
 }
