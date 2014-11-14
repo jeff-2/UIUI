@@ -1,5 +1,6 @@
 package edu.illinois.engr.web.cs465uiui.ui;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -127,7 +128,10 @@ public class QueryTagsDialog extends DialogFragment
 		
 		@Override protected ServerResult<List<Tag>> doInBackground(Void... params)
 		{
-			return UIFetch.allTags();
+			ServerResult<List<Tag>> result = UIFetch.allTags();
+			if(result.success)
+				Collections.sort(result.payload, Tag.compare);
+			return result;
 		}
 		
 		@Override protected void onPostExecute(ServerResult<List<Tag>> result)
@@ -135,7 +139,7 @@ public class QueryTagsDialog extends DialogFragment
 			if(result.success)
 			{
 				//unselect tags that no longer exist
-				tags = result.result;
+				tags = result.payload;
 				for(Iterator<Tag> it = query.tags.iterator(); it.hasNext(); /*nothing*/)
 					if(!tags.contains(it.next()))
 						it.remove();

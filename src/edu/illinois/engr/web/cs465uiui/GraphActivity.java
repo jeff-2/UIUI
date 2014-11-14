@@ -52,7 +52,7 @@ public class GraphActivity extends Activity
 	
 	private TextView name, location, focusLevel, focusTime, focusExplanation;
 	private CrowdGraph graph;
-	private View zoomIn, zoomOut, zoomLeft, zoomRight;
+	private View zoomIn, zoomOut, zoomLeft, zoomRight, zoomReset;
 	private ViewGroup navBar;
 	
 	
@@ -77,6 +77,7 @@ public class GraphActivity extends Activity
 		zoomOut = findViewById(R.id.act_graph_zoom_out);
 		zoomLeft = findViewById(R.id.act_graph_zoom_left);
 		zoomRight = findViewById(R.id.act_graph_zoom_right);
+		zoomReset = findViewById(R.id.act_graph_zoom_reset);
 		navBar = (ViewGroup)findViewById(R.id.act_graph_navbar);
 		
 		graph.register(selectionHandler);
@@ -84,6 +85,7 @@ public class GraphActivity extends Activity
 		zoomOut.setOnClickListener(zoomHandler);
 		zoomLeft.setOnClickListener(zoomHandler);
 		zoomRight.setOnClickListener(zoomHandler);
+		zoomReset.setOnClickListener(zoomHandler);
 		
 		name.setText("");
 		location.setText("");
@@ -163,7 +165,7 @@ public class GraphActivity extends Activity
 		{
 			ServerResult<Restaurant> result = UIFetch.restaurant(id);
 			if(result.success)
-				restaurant = result.result;
+				restaurant = result.payload;
 			else
 				return new ServerResult<>(result.error);//XXX kludgy
 				
@@ -174,11 +176,11 @@ public class GraphActivity extends Activity
 		{
 			if(result.success)
 			{
-				day = result.result;
+				day = result.payload;
 				date = myDate;
 				name.setText(restaurant.name);
 				location.setText(restaurant.location);
-				graph.setData(result.result);
+				graph.setData(result.payload);
 				refreshNav();
 			}
 			else
@@ -234,6 +236,11 @@ public class GraphActivity extends Activity
 				graph.setScrollX(graph.getScrollX() - 150);
 			else if(v == zoomRight)
 				graph.setScrollX(graph.getScrollX() + 150);
+			else if(v == zoomReset)
+			{
+				graph.setScrollX(0);
+				graph.setScaleX(1);
+			}
 		}
 	}
 }

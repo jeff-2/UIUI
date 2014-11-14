@@ -8,7 +8,7 @@ public class ServerResult<T>
 	public final boolean success;
 	
 	/**The thing we retrieved from the server. Null if the request failed.*/
-	public final T result;
+	public final T payload;
 	/**The error that caused the request to fail.*/
 	public final Exception error;
 	
@@ -16,7 +16,7 @@ public class ServerResult<T>
 	private ServerResult(boolean success, T result, Exception error)
 	{
 		this.success = success;
-		this.result = result;
+		this.payload = result;
 		this.error = error;
 	}
 	

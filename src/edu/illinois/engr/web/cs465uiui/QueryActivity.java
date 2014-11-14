@@ -43,6 +43,10 @@ public class QueryActivity extends Activity implements LocationDialog.Listener, 
 		
 		positionNone.setOnClickListener(handler);
 		positionCustom.setOnClickListener(handler);
+		allTagsDisplay.setOnClickListener(new View.OnClickListener()
+		{
+			@Override public void onClick(View v){handleEditTags(v);}
+		});
 		
 		query = QueryData.load(getApplicationContext());
 		refresh();
