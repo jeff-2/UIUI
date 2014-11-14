@@ -21,4 +21,11 @@ public class DateDisplay
 	{
 		return cal.getDisplayName(MONTH, SHORT, Locale.getDefault()) + " " + cal.get(DATE);
 	}
+	
+	
+	/**Displays the time only.*/
+	public static String time(Calendar cal)
+	{
+		return cal.get(HOUR_OF_DAY) + ":" + cal.get(MINUTE);
+	}
 }

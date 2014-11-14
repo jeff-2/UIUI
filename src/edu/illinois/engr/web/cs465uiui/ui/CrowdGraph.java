@@ -11,10 +11,12 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.AttributeSet;
+import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 
 /**A view that shows a graph of crowdedness over a time period.
- * TODO will Sets its own on-click listener; don't try to catch those events outside.*/
+ * Sets its own on-touch listener; don't try to catch those events outside.*/
 public class CrowdGraph extends View
 {
 	private final Paint paintBars = new Paint(), paintClosed = new Paint();
@@ -30,6 +32,9 @@ public class CrowdGraph extends View
 	/**In minutes; invalid until we get data.*/
 	private int open, close;
 	
+	private final Handler handler = new Handler();
+	private final List<Listener> listeners = new ArrayList<>();
+	
 	
 	
 	/**Constructor used by the system; don't use this directly.*/
@@ -37,7 +42,8 @@ public class CrowdGraph extends View
 	{
 		super(context, attr);
 		paintBars.setColor(context.getResources().getColor(R.color.emphasis));
-		paintClosed.setColor(context.getResources().getColor(R.color.light));
+		paintClosed.setColor(context.getResources().getColor(R.color.weak));
+		setOnTouchListener(handler);
 	}
 	
 	
@@ -82,6 +88,7 @@ public class CrowdGraph extends View
 	}
 	
 	
+	
 	@Override public void onDraw(Canvas canvas)
 	{
 		if(displayBars == null)
@@ -102,11 +109,63 @@ public class CrowdGraph extends View
 	
 	
 	
+	public void register(Listener listener){listeners.add(listener);}
+	public void deregister(Listener listener){listeners.remove(listener);}
+	
+	
+	
 	
 	/**Interface the parent activity can implement to be notified when things happen to this graph.*/
 	public static interface Listener
 	{
-		/**Called when the user clicks on part of the graph because he wants to see more info about.*/
-		public void onRequestInfo(int index);
+		/**Called when the user selects a time at which the restaurant is closed.*/
+		public void onSelectedClosed(Calendar time);
+		/**Called when the user selects one of the bars on the chart.
+		 * @param dataIndex an index in the CrowdDay.values that was passed to this graph.*/
+		public void onSelectedBar(int dataIndex);
+	}
+	
+	
+	
+	/**Handles clicks on itself.*/
+	private class Handler implements View.OnTouchListener
+	{
+		@Override public boolean onTouch(View v, MotionEvent event)
+		{
+			//do nothing if we haven't loaded data yet
+			if(displayBars == null)
+				return false;//not consumed
+			
+			float timeMinutes = event.getAxisValue(MotionEvent.AXIS_X) / getWidth() * 60 * 24;
+			int closestBar = Math.round(timeMinutes / barMinutes);
+			int closestTime = barMinutes * closestBar;
+			if(closestTime < open || closestTime > close)
+			{
+				for(Listener listener : listeners)
+					listener.onSelectedClosed(Time.fromMinutes((int)timeMinutes));
+			}
+			else
+			{
+				int closestIndex = 0;
+				int closestDiff = Math.abs(closestTime - Time.minutes(data.values.get(0).first));
+				for(int c = 1; c < data.values.size(); c++)
+				{
+					int diff = Math.abs(closestTime - Time.minutes(data.values.get(c).first));
+					if(diff < closestDiff)
+					{
+						closestIndex = c;
+						closestDiff = diff;
+					}
+				}
+				
+				
+				for(Listener listener : listeners)
+					listener.onSelectedBar(closestIndex);
+			}
+			
+			return false;
+		}
+
+		
 	}
 }

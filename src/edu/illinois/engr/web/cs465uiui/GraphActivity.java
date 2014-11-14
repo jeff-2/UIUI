@@ -1,11 +1,14 @@
 package edu.illinois.engr.web.cs465uiui;
 
 import java.util.*;
+
 import static java.util.Calendar.*;
 
 import edu.illinois.engr.web.cs465uiui.net.ServerResult;
 import edu.illinois.engr.web.cs465uiui.text.DateDisplay;
+import edu.illinois.engr.web.cs465uiui.text.Display;
 import edu.illinois.engr.web.cs465uiui.ui.CrowdGraph;
+import edu.illinois.engr.web.cs465uiui.ui.CrowdLevel;
 import edu.illinois.engr.web.cs465uiui.ui.UIFetch;
 
 import android.app.Activity;
@@ -44,10 +47,14 @@ public class GraphActivity extends Activity
 	private Calendar date;
 	/**If true, nav buttons shouldn't do anything.*/
 	private boolean busy = false;
+	/**Null when not loaded.*/
+	private CrowdDay day = null;
 	
-	private TextView name, location;
+	private TextView name, location, focusLevel, focusTime, focusExplanation;
 	private CrowdGraph graph;
 	private ViewGroup navBar;
+	
+	private final SelectionHandler selectionHandler = new SelectionHandler();
 	
 	
 	@Override protected void onCreate(Bundle savedInstanceState)
@@ -61,12 +68,18 @@ public class GraphActivity extends Activity
 		name = (TextView)findViewById(R.id.act_graph_name);
 		location = (TextView)findViewById(R.id.act_graph_location);
 		navBar = (ViewGroup)findViewById(R.id.act_graph_navbar);
+		focusLevel = (TextView)findViewById(R.id.act_graph_focuslevel);
+		focusTime = (TextView)findViewById(R.id.act_graph_focustime);
+		focusExplanation = (TextView)findViewById(R.id.act_graph_focusexplanation);
+		
+		graph.register(selectionHandler);
 		
 		name.setText("");
 		location.setText("");
 		
 		new LoadTask(intentDate(), intentRestaurantId(), this).execute();
 		refreshNav();
+		focus(null, null);
 	}
 	
 	
@@ -87,6 +100,27 @@ public class GraphActivity extends Activity
 				name.setBackground(getResources().getDrawable(R.drawable.graph_nav_selected));
 			v.setOnClickListener(new NavHandler((Calendar)current.clone(), this));
 			navBar.addView(v);
+		}
+	}
+	
+	
+	
+	/**Fill out the focus display area with a focus.
+	 * @param time null to clear the focus display instead.*/
+	private void focus(Calendar calendar, CrowdLevel level)
+	{
+		if(calendar == null)
+		{
+			focusLevel.setText("");
+			focusTime.setText("");
+			focusExplanation.setText("");
+		}
+		else
+		{
+			focusLevel.setText(level.name);
+			focusLevel.setTextColor(level.color);
+			focusTime.setText(DateDisplay.time(calendar));
+			focusExplanation.setText(level.description);
 		}
 	}
 	
@@ -129,6 +163,7 @@ public class GraphActivity extends Activity
 		{
 			if(result.success)
 			{
+				day = result.result;
 				date = myDate;
 				name.setText(restaurant.name);
 				location.setText(restaurant.location);
@@ -158,5 +193,17 @@ public class GraphActivity extends Activity
 			date = myDate;
 			new LoadTask(myDate, intentRestaurantId(), activity).execute();
 		}
+	}
+	
+	
+	/**Handles selection events from the graph.*/
+	private class SelectionHandler implements CrowdGraph.Listener
+	{
+		@Override public void onSelectedClosed(Calendar time){focus(time, CrowdLevel.closed);}
+
+		@Override public void onSelectedBar(int dataIndex)
+		{
+			focus(day.values.get(dataIndex).first, CrowdLevel.from(day.values.get(dataIndex).second));
+		};
 	}
 }
